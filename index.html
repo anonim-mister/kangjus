@@ -1518,25 +1518,12 @@
           </div>
         </div>
 
-        <!-- JSON Data Storage Controller -->
-        <div class="json-data-card">
-          <div class="json-data-card-title">
-            <i data-lucide="database" style="width: 16px; height: 16px; color: var(--color-primary-green);"></i>
-            <span>Penyimpanan Database JSON</span>
-          </div>
-          <p class="json-data-card-desc">
-            Data absensi tersinkronisasi otomatis dalam format JSON (LocalStorage / file data.json).
-          </p>
-          <div class="json-actions-grid">
-            <button class="btn-secondary-action" onclick="exportDataToJSON()">
-              <i data-lucide="download" style="width: 14px; height: 14px; color: var(--color-primary-green);"></i>
-              <span>Unduh JSON</span>
-            </button>
-            <button class="btn-secondary-action" onclick="handleLogout()">
-              <i data-lucide="log-out" style="width: 14px; height: 14px; color: #ef4444;"></i>
-              <span>Ganti Akun</span>
-            </button>
-          </div>
+        <!-- Tombol Ganti / Keluar Akun -->
+        <div style="margin-top: 18px;">
+          <button class="btn-absen" style="background: #ffffff; color: #dc2626; border: 1.5px solid #fecaca; box-shadow: var(--shadow-sm);" onclick="handleLogout()">
+            <i data-lucide="log-out" style="color: #dc2626;"></i>
+            <span>Keluar / Ganti Akun Pegawai</span>
+          </button>
         </div>
 
         <!-- Version Footer -->
@@ -1763,7 +1750,7 @@
     /* =======================================================
        DATA STORE SYSTEM & DATABASE JSON
        ======================================================= */
-    const STORAGE_KEY = "KANG_JUS_APP_DATA_V2";
+    const STORAGE_KEY = "KANG_JUS_APP_DATA_V3_CLEAN";
     const SESSION_USER_KEY = "KANG_JUS_ACTIVE_USER";
 
     const INITIAL_JSON_DATA = {
@@ -1878,86 +1865,7 @@
           }
         }
       ],
-      attendanceLogs: [
-        {
-          nik: "50126143",
-          date: "2026-11-22",
-          dayName: "Ahad",
-          dateNum: 22,
-          monthName: "Nov",
-          inTime: "14:55:12",
-          outTime: "23:04:10",
-          duration: "8 Jam 9 Menit",
-          notes: "Auto-Apel",
-          statusType: "HADIR",
-          statusText: "Hadir Tepat Waktu"
-        },
-        {
-          nik: "50126143",
-          date: "2026-11-21",
-          dayName: "Sabtu",
-          dateNum: 21,
-          monthName: "Nov",
-          inTime: "08:52:19",
-          outTime: "17:02:44",
-          duration: "8 Jam 10 Menit",
-          notes: "Auto-Apel",
-          statusType: "HADIR",
-          statusText: "Hadir Tepat Waktu"
-        },
-        {
-          nik: "50126143",
-          date: "2026-11-20",
-          dayName: "Jumat",
-          dateNum: 20,
-          monthName: "Nov",
-          inTime: "09:12:05",
-          outTime: "17:05:00",
-          duration: "7 Jam 53 Menit",
-          notes: "Terlambat 12 Menit",
-          statusType: "TERLAMBAT",
-          statusText: "Terlambat"
-        },
-        {
-          nik: "210126146",
-          date: "2026-11-22",
-          dayName: "Ahad",
-          dateNum: 22,
-          monthName: "Nov",
-          inTime: "08:56:00",
-          outTime: "17:03:00",
-          duration: "8 Jam 7 Menit",
-          notes: "Auto-Apel",
-          statusType: "HADIR",
-          statusText: "Hadir Tepat Waktu"
-        },
-        {
-          nik: "290126149",
-          date: "2026-11-22",
-          dayName: "Ahad",
-          dateNum: 22,
-          monthName: "Nov",
-          inTime: "14:50:00",
-          outTime: "23:00:00",
-          duration: "8 Jam 10 Menit",
-          notes: "Auto-Apel",
-          statusType: "HADIR",
-          statusText: "Hadir Tepat Waktu"
-        },
-        {
-          nik: "130626165",
-          date: "2026-11-22",
-          dayName: "Ahad",
-          dateNum: 22,
-          monthName: "Nov",
-          inTime: "08:52:00",
-          outTime: "17:01:00",
-          duration: "8 Jam 9 Menit",
-          notes: "Auto-Apel",
-          statusType: "HADIR",
-          statusText: "Hadir Tepat Waktu"
-        }
-      ]
+      attendanceLogs: []
     };
 
     let appData = null;
@@ -2974,17 +2882,6 @@
         printWindow.print();
         printWindow.close();
       }, 350);
-    }
-
-    function exportDataToJSON() {
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
-      const downloadAnchor = document.createElement('a');
-      downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", `kang_jus_absensi_${new Date().toISOString().slice(0,10)}.json`);
-      document.body.appendChild(downloadAnchor);
-      downloadAnchor.click();
-      downloadAnchor.remove();
-      showToast("File data JSON berhasil diunduh!", "success");
     }
 
     function showToast(msg, type = "success") {
