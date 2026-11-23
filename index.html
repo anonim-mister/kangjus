@@ -1594,21 +1594,8 @@
         <!-- Responsive Excel Table Wrapper -->
         <div style="overflow-x: auto; border: 1px solid var(--border-color); border-radius: var(--radius-sm); margin-bottom: 14px; background: #fff;">
           <table id="excelScheduleTable" style="width: 100%; border-collapse: collapse; font-size: 11px; white-space: nowrap;">
-            <thead>
-              <tr style="background: #f8fafc; border-bottom: 2px solid var(--border-color); text-align: left;">
-                <th style="padding: 8px 10px; border-right: 1px solid var(--border-color);">GROUP</th>
-                <th style="padding: 8px 10px; border-right: 1px solid var(--border-color);">NIK</th>
-                <th style="padding: 8px 10px; border-right: 1px solid var(--border-color);">NAME</th>
-                <th style="padding: 8px 10px; border-right: 1px solid var(--border-color);">POSITION</th>
-                <th style="padding: 8px 6px; border-right: 1px solid var(--border-color); text-align: center;">Senin</th>
-                <th style="padding: 8px 6px; border-right: 1px solid var(--border-color); text-align: center;">Selasa</th>
-                <th style="padding: 8px 6px; border-right: 1px solid var(--border-color); text-align: center;">Rabu</th>
-                <th style="padding: 8px 6px; border-right: 1px solid var(--border-color); text-align: center;">Kamis</th>
-                <th style="padding: 8px 6px; border-right: 1px solid var(--border-color); text-align: center;">Jumat</th>
-                <th style="padding: 8px 6px; border-right: 1px solid var(--border-color); text-align: center;">Sabtu</th>
-                <th style="padding: 8px 6px; border-right: 1px solid var(--border-color); text-align: center;">Ahad</th>
-                <th style="padding: 8px 10px; text-align: center;">Aksi</th>
-              </tr>
+            <thead id="excelScheduleTableHead">
+              <!-- Dynamically populated header with dates -->
             </thead>
             <tbody id="excelScheduleTableBody">
               <!-- Dynamically populated rows -->
@@ -2172,6 +2159,14 @@
     function updateTodayScheduleView() {
       if (!currentUser) return;
 
+      const cycleInfo = getTwoWeekCycleInfo();
+      isWeek2 = cycleInfo.isM2Current;
+
+      const currentWeekIndicator = document.getElementById('currentWeekIndicator');
+      if (currentWeekIndicator) {
+        currentWeekIndicator.innerText = `Siklus: ${cycleInfo.currentCycleName} (${cycleInfo.isM2Current ? 'Minggu 2' : 'Minggu 1'})`;
+      }
+
       const daysIndo = ['Ahad', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
       const currentDayName = daysIndo[new Date().getDay()] || 'Senin';
       const scheduleCycle = isWeek2 ? currentUser.scheduleM2 : currentUser.scheduleM1;
@@ -2225,17 +2220,19 @@
     function renderWeekScheduleChips(scheduleCycle, activeDayName) {
       const weekChipsEl = document.getElementById('weekScheduleChips');
       const days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Ahad'];
+      const currentWeekDates = getCycleDates(isWeek2 ? 'M2' : 'M1');
       
       let html = '';
-      days.forEach(day => {
+      days.forEach((day, idx) => {
         const shift = scheduleCycle[day];
         const isOff = shift === 'X';
         const isActive = day === activeDayName;
         const displayShift = isOff ? 'OFF' : shift.substring(0, 5);
+        const dateObj = currentWeekDates[idx];
 
         html += `
           <div class="day-chip ${isActive ? 'active-day' : ''} ${isOff ? 'is-off' : ''}">
-            <span class="day-chip-name">${day.substring(0, 3)}</span>
+            <span class="day-chip-name">${day.substring(0, 3)} (${dateObj.dateNum})</span>
             <span class="day-chip-shift">${displayShift}</span>
           </div>
         `;
@@ -2711,11 +2708,92 @@
       lucide.createIcons();
     }
 
+    /* =======================================================
+       PERHITUNGAN SIKLUS 2 MINGGU & TANGGAL DINAMIS
+       ======================================================= */
+    const BASE_CYCLE_DATE = new Date(2026, 10, 16); // Senin, 16 Nov 2026 sebagai titik acuan awal M1
+
+    function getTwoWeekCycleInfo(targetDate = new Date()) {
+      // Cari selisih hari dari Senin awal minggu acuan
+      const d = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate());
+      
+      // Hitung Senin pada minggu tanggal target
+      const dayOfWeek = d.getDay(); // 0 = Ahad, 1 = Senin, ...
+      const diffToMonday = (dayOfWeek === 0 ? -6 : 1) - dayOfWeek;
+      const currentMonday = new Date(d);
+      currentMonday.setDate(d.getDate() + diffToMonday);
+
+      // Selisih minggu dari acuan awal
+      const diffMs = currentMonday.getTime() - BASE_CYCLE_DATE.getTime();
+      const diffWeeks = Math.floor(diffMs / (7 * 24 * 60 * 60 * 1000));
+      
+      // Jika diffWeeks genap => Siklus M1 (Minggu 1), jika ganjil => Siklus M2 (Minggu 2)
+      const isM2 = (Math.abs(diffWeeks) % 2) === 1;
+      
+      // Ambil tanggal Senin untuk M1 dan M2 pada siklus 2 minggu saat ini
+      const m1Monday = new Date(currentMonday);
+      if (isM2) {
+        m1Monday.setDate(currentMonday.getDate() - 7);
+      }
+      const m2Monday = new Date(m1Monday);
+      m2Monday.setDate(m1Monday.getDate() + 7);
+
+      return {
+        isM2Current: isM2,
+        currentCycleName: isM2 ? 'M2' : 'M1',
+        m1Monday: m1Monday,
+        m2Monday: m2Monday
+      };
+    }
+
+    function getCycleDates(weekType) {
+      const cycleInfo = getTwoWeekCycleInfo();
+      const startMonday = weekType === 'M1' ? new Date(cycleInfo.m1Monday) : new Date(cycleInfo.m2Monday);
+      const monthsShort = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+
+      const dates = [];
+      for (let i = 0; i < 7; i++) {
+        const cur = new Date(startMonday);
+        cur.setDate(startMonday.getDate() + i);
+        dates.push({
+          dateNum: cur.getDate(),
+          monthName: monthsShort[cur.getMonth()],
+          fullDateStr: `${cur.getDate()} ${monthsShort[cur.getMonth()]}`
+        });
+      }
+      return dates;
+    }
+
     function renderScheduleTable() {
+      const thead = document.getElementById('excelScheduleTableHead');
       const tbody = document.getElementById('excelScheduleTableBody');
       const days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Ahad'];
       const cycleKey = activeTableWeek === 'M1' ? 'scheduleM1' : 'scheduleM2';
+      const weekDates = getCycleDates(activeTableWeek);
 
+      // Render Header dengan Tanggal Aktual Siklus
+      let headHtml = `
+        <tr style="background: #f8fafc; border-bottom: 2px solid var(--border-color); text-align: left;">
+          <th style="padding: 8px 10px; border-right: 1px solid var(--border-color);">GROUP</th>
+          <th style="padding: 8px 10px; border-right: 1px solid var(--border-color);">NIK</th>
+          <th style="padding: 8px 10px; border-right: 1px solid var(--border-color);">NAME</th>
+          <th style="padding: 8px 10px; border-right: 1px solid var(--border-color);">POSITION</th>
+      `;
+
+      days.forEach((day, idx) => {
+        const dObj = weekDates[idx];
+        headHtml += `
+          <th style="padding: 6px 4px; border-right: 1px solid var(--border-color); text-align: center;">
+            <div style="font-size: 11px; font-weight: 800;">${day}</div>
+            <div style="font-size: 10px; font-weight: 600; color: var(--color-primary-green);">${dObj.fullDateStr}</div>
+          </th>
+        `;
+      });
+
+      headHtml += `<th style="padding: 8px 10px; text-align: center;">Aksi</th></tr>`;
+      thead.innerHTML = headHtml;
+
+      // Render Baris Karyawan
       let html = '';
       appData.employees.forEach((emp, empIdx) => {
         const sched = emp[cycleKey] || {};
