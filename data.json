@@ -1,0 +1,193 @@
+{
+  "employees": [
+    {
+      "nik": "50126143",
+      "name": "AGUNG KURNIA RAMADAN",
+      "position": "SPV",
+      "group": "MANAGEMENT",
+      "role": "ADMIN",
+      "password": "1234",
+      "scheduleM1": {
+        "Senin": "09:00:00",
+        "Selasa": "X",
+        "Rabu": "15:00:00",
+        "Kamis": "15:00:00",
+        "Jumat": "09:00:00",
+        "Sabtu": "09:00:00",
+        "Ahad": "15:00:00",
+        "offCount": 1
+      },
+      "scheduleM2": {
+        "Senin": "15:00:00",
+        "Selasa": "09:00:00",
+        "Rabu": "X",
+        "Kamis": "15:00:00",
+        "Jumat": "09:00:00",
+        "Sabtu": "15:00:00",
+        "Ahad": "15:00:00",
+        "offCount": 1
+      }
+    },
+    {
+      "nik": "210126146",
+      "name": "ERMA DAYANTI",
+      "position": "CREW",
+      "group": "CREW",
+      "role": "CREW",
+      "scheduleM1": {
+        "Senin": "15:00:00",
+        "Selasa": "09:00:00",
+        "Rabu": "X",
+        "Kamis": "15:00:00",
+        "Jumat": "09:00:00",
+        "Sabtu": "15:00:00",
+        "Ahad": "09:00:00",
+        "offCount": 1
+      },
+      "scheduleM2": {
+        "Senin": "09:00:00",
+        "Selasa": "X",
+        "Rabu": "15:00:00",
+        "Kamis": "15:00:00",
+        "Jumat": "15:00:00",
+        "Sabtu": "09:00:00",
+        "Ahad": "15:00:00",
+        "offCount": 1
+      }
+    },
+    {
+      "nik": "290126149",
+      "name": "INDAH NOVIANTI",
+      "position": "CREW",
+      "group": "CREW",
+      "role": "CREW",
+      "scheduleM1": {
+        "Senin": "X",
+        "Selasa": "15:00:00",
+        "Rabu": "15:00:00",
+        "Kamis": "09:00:00",
+        "Jumat": "15:00:00",
+        "Sabtu": "09:00:00",
+        "Ahad": "15:00:00",
+        "offCount": 1
+      },
+      "scheduleM2": {
+        "Senin": "15:00:00",
+        "Selasa": "15:00:00",
+        "Rabu": "09:00:00",
+        "Kamis": "X",
+        "Jumat": "15:00:00",
+        "Sabtu": "09:00:00",
+        "Ahad": "09:00:00",
+        "offCount": 1
+      }
+    },
+    {
+      "nik": "130626165",
+      "name": "FITRI AYU PURNAMA",
+      "position": "CREW",
+      "group": "CREW",
+      "role": "CREW",
+      "scheduleM1": {
+        "Senin": "15:00:00",
+        "Selasa": "15:00:00",
+        "Rabu": "09:00:00",
+        "Kamis": "X",
+        "Jumat": "15:00:00",
+        "Sabtu": "15:00:00",
+        "Ahad": "09:00:00",
+        "offCount": 1
+      },
+      "scheduleM2": {
+        "Senin": "X",
+        "Selasa": "15:00:00",
+        "Rabu": "15:00:00",
+        "Kamis": "09:00:00",
+        "Jumat": "09:00:00",
+        "Sabtu": "15:00:00",
+        "Ahad": "09:00:00",
+        "offCount": 1
+      }
+    }
+  ],
+  "attendanceLogs": [
+    {
+      "nik": "50126143",
+      "date": "2026-11-22",
+      "dayName": "Ahad",
+      "dateNum": 22,
+      "monthName": "Nov",
+      "inTime": "14:55:12",
+      "outTime": "23:04:10",
+      "duration": "8 Jam 9 Menit",
+      "notes": "Auto-Apel",
+      "statusType": "HADIR",
+      "statusText": "Hadir Tepat Waktu"
+    },
+    {
+      "nik": "50126143",
+      "date": "2026-11-21",
+      "dayName": "Sabtu",
+      "dateNum": 21,
+      "monthName": "Nov",
+      "inTime": "08:52:19",
+      "outTime": "17:02:44",
+      "duration": "8 Jam 10 Menit",
+      "notes": "Auto-Apel",
+      "statusType": "HADIR",
+      "statusText": "Hadir Tepat Waktu"
+    },
+    {
+      "nik": "50126143",
+      "date": "2026-11-20",
+      "dayName": "Jumat",
+      "dateNum": 20,
+      "monthName": "Nov",
+      "inTime": "09:12:05",
+      "outTime": "17:05:00",
+      "duration": "7 Jam 53 Menit",
+      "notes": "Terlambat 12 Menit",
+      "statusType": "TERLAMBAT",
+      "statusText": "Terlambat"
+    },
+    {
+      "nik": "210126146",
+      "date": "2026-11-22",
+      "dayName": "Ahad",
+      "dateNum": 22,
+      "monthName": "Nov",
+      "inTime": "08:56:00",
+      "outTime": "17:03:00",
+      "duration": "8 Jam 7 Menit",
+      "notes": "Auto-Apel",
+      "statusType": "HADIR",
+      "statusText": "Hadir Tepat Waktu"
+    },
+    {
+      "nik": "290126149",
+      "date": "2026-11-22",
+      "dayName": "Ahad",
+      "dateNum": 22,
+      "monthName": "Nov",
+      "inTime": "14:50:00",
+      "outTime": "23:00:00",
+      "duration": "8 Jam 10 Menit",
+      "notes": "Auto-Apel",
+      "statusType": "HADIR",
+      "statusText": "Hadir Tepat Waktu"
+    },
+    {
+      "nik": "130626165",
+      "date": "2026-11-22",
+      "dayName": "Ahad",
+      "dateNum": 22,
+      "monthName": "Nov",
+      "inTime": "08:52:00",
+      "outTime": "17:01:00",
+      "duration": "8 Jam 9 Menit",
+      "notes": "Auto-Apel",
+      "statusType": "HADIR",
+      "statusText": "Hadir Tepat Waktu"
+    }
+  ]
+}

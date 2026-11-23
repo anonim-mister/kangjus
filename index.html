@@ -1,0 +1,3029 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Kang Jus - Absensi Pegawai Mobile</title>
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- HTML5 QR Code Scanner Library for Web Mobile Camera -->
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <style>
+    :root {
+      /* Theme colors extracted from Kang Jus Logo */
+      --color-primary-green: #229f42; /* Daun & teks KANG */
+      --color-primary-green-dark: #1b8235;
+      --color-primary-green-light: #e8f7ec;
+      --color-primary-orange: #f48020; /* Teks JUS & aksen */
+      --color-primary-orange-light: #fef3e9;
+      --color-yellow: #f8c300; /* Jus minuman */
+      --color-yellow-light: #fff9e6;
+
+      /* UI Tokens */
+      --bg-app: #f4f6f8;
+      --bg-card: #ffffff;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --text-subtle: #94a3b8;
+      --border-color: #e2e8f0;
+      --border-light: #f1f5f9;
+
+      /* Status Tokens */
+      --status-hadir: #229f42;
+      --status-hadir-bg: #e8f7ec;
+      --status-terlambat: #f48020;
+      --status-terlambat-bg: #fef3e9;
+      --status-dinas: #0284c7;
+      --status-dinas-bg: #e0f2fe;
+      --status-tidakhadir: #ef4444;
+      --status-tidakhadir-bg: #fee2e2;
+      --status-off: #64748b;
+      --status-off-bg: #f1f5f9;
+
+      /* Dimensions & Radius */
+      --radius-sm: 10px;
+      --radius-md: 16px;
+      --radius-lg: 20px;
+      --radius-xl: 26px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
+      --shadow-card: 0 4px 16px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
+      --shadow-floating: 0 10px 25px -5px rgba(34, 159, 66, 0.2);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #0f172a;
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Mobile Device Canvas Wrapper */
+    .mobile-frame {
+      width: 100%;
+      max-width: 440px;
+      min-height: 100vh;
+      background-color: var(--bg-app);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+      overflow-x: hidden;
+    }
+
+    /* =======================================================
+       LOGIN SCREEN STYLES
+       ======================================================= */
+    .login-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 30px 24px;
+      background: linear-gradient(180deg, #ffffff 0%, #f4f6f8 100%);
+      z-index: 100;
+      position: absolute;
+      inset: 0;
+    }
+    .login-container.hidden {
+      display: none;
+    }
+
+    .login-logo-box {
+      width: 110px;
+      height: 110px;
+      border-radius: 28px;
+      padding: 6px;
+      background: #ffffff;
+      box-shadow: 0 12px 30px rgba(34, 159, 66, 0.15);
+      border: 2px solid var(--border-light);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .login-logo-img {
+      width: 100%;
+      height: 100%;
+      border-radius: 22px;
+      object-fit: cover;
+    }
+
+    .login-title-wrap {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .login-brand-title {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--color-primary-green);
+      line-height: 1.2;
+      letter-spacing: -0.5px;
+    }
+    .login-brand-title span {
+      color: var(--color-primary-orange);
+    }
+    .login-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+      font-weight: 500;
+    }
+
+    /* Login Form Card */
+    .login-card {
+      width: 100%;
+      background: #ffffff;
+      border-radius: var(--radius-xl);
+      padding: 24px 20px;
+      box-shadow: var(--shadow-card);
+      border: 1px solid var(--border-light);
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+      text-align: left;
+    }
+    .form-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .input-wrapper i {
+      position: absolute;
+      left: 14px;
+      color: var(--text-muted);
+      width: 18px;
+      height: 18px;
+    }
+    .form-input {
+      width: 100%;
+      padding: 13px 14px 13px 42px;
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-md);
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-main);
+      outline: none;
+      transition: all 0.2s;
+      background: var(--bg-app);
+    }
+    .form-input:focus {
+      border-color: var(--color-primary-green);
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(34, 159, 66, 0.15);
+    }
+
+    /* Detected Badge on NIK Typing */
+    .role-badge-notice {
+      display: none;
+      margin-top: 8px;
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 11px;
+      font-weight: 700;
+      align-items: center;
+      gap: 6px;
+      animation: fadeIn 0.2s ease-out;
+    }
+    .role-badge-notice.admin {
+      display: flex;
+      background: var(--color-primary-orange-light);
+      color: var(--color-primary-orange);
+      border: 1px solid #fed7aa;
+    }
+    .role-badge-notice.crew {
+      display: flex;
+      background: var(--color-primary-green-light);
+      color: var(--color-primary-green);
+      border: 1px solid #bbf7d0;
+    }
+
+    /* Password field toggle container */
+    #passwordGroup {
+      display: none;
+      animation: fadeIn 0.25s ease-out;
+    }
+    #passwordGroup.show {
+      display: block;
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, var(--color-primary-green), var(--color-primary-green-dark));
+      color: #ffffff;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: var(--shadow-floating);
+      transition: all 0.2s;
+      margin-top: 8px;
+    }
+    .btn-login:active {
+      transform: scale(0.98);
+    }
+
+    /* Quick Fill NIK Chips for ease of use */
+    .quick-chips-wrap {
+      margin-top: 20px;
+      width: 100%;
+    }
+    .quick-chips-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+    .quick-chips-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+    .chip-item {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 8px 10px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .chip-item:hover, .chip-item:active {
+      border-color: var(--color-primary-green);
+      background: var(--color-primary-green-light);
+    }
+    .chip-item-name {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .chip-item-nik {
+      font-size: 10px;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      margin-top: 2px;
+    }
+
+    /* =======================================================
+       MAIN APP SCREEN (Shown after login)
+       ======================================================= */
+    .app-screen {
+      display: none;
+      flex-direction: column;
+      min-height: 100vh;
+      padding-bottom: 90px;
+    }
+    .app-screen.active {
+      display: flex;
+    }
+
+    /* App Header Bar */
+    .app-header {
+      background: #ffffff;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-light);
+      position: sticky;
+      top: 0;
+      z-index: 40;
+    }
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .brand-logo-img {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      object-fit: cover;
+      box-shadow: var(--shadow-sm);
+      border: 1.5px solid #eef2f6;
+    }
+    .brand-text h1 {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--color-primary-green);
+      line-height: 1.2;
+    }
+    .brand-text h1 span {
+      color: var(--color-primary-orange);
+    }
+    .role-pill-badge {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 12px;
+      letter-spacing: 0.3px;
+      display: inline-block;
+    }
+    .role-pill-badge.admin {
+      background: var(--color-primary-orange-light);
+      color: var(--color-primary-orange);
+    }
+    .role-pill-badge.crew {
+      background: var(--color-primary-green-light);
+      color: var(--color-primary-green);
+    }
+
+    .btn-logout {
+      background: #fee2e2;
+      border: none;
+      border-radius: 20px;
+      padding: 6px 12px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #ef4444;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+    }
+
+    /* Page Container */
+    .page-content {
+      padding: 16px 20px 24px 20px;
+      display: none;
+      animation: fadeIn 0.25s ease-out forwards;
+    }
+    .page-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* =======================================================
+       TAB 1: HOME STYLES
+       ======================================================= */
+    .greeting-section {
+      margin-bottom: 18px;
+    }
+    .greeting-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-primary-green);
+      background-color: var(--color-primary-green-light);
+      padding: 4px 10px;
+      border-radius: 30px;
+      margin-bottom: 8px;
+    }
+    .greeting-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text-main);
+      line-height: 1.25;
+      letter-spacing: -0.5px;
+    }
+    .greeting-date {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 500;
+      margin-top: 3px;
+    }
+
+    /* Status Card */
+    .status-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      box-shadow: var(--shadow-card);
+      border: 1px solid var(--border-light);
+      margin-bottom: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    .status-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .status-card-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+    .status-pill {
+      font-size: 12px;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .status-pill.belum {
+      background-color: var(--status-off-bg);
+      color: var(--status-off);
+    }
+    .status-pill.masuk {
+      background-color: var(--status-terlambat-bg);
+      color: var(--color-primary-orange);
+    }
+    .status-pill.selesai {
+      background-color: var(--status-hadir-bg);
+      color: var(--color-primary-green);
+    }
+    .status-pill.libur {
+      background-color: var(--status-off-bg);
+      color: var(--text-muted);
+    }
+
+    .time-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .time-box {
+      background: var(--bg-app);
+      padding: 14px 16px;
+      border-radius: var(--radius-md);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .time-box-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .time-box-value {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -0.3px;
+    }
+    .time-box-sub {
+      font-size: 11px;
+      color: var(--text-subtle);
+    }
+
+    .btn-absen {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 15px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: var(--shadow-floating);
+    }
+    .btn-absen:active {
+      transform: scale(0.98);
+    }
+    .btn-absen.btn-masuk {
+      background: linear-gradient(135deg, var(--color-primary-green), var(--color-primary-green-dark));
+      color: #ffffff;
+    }
+    .btn-absen.btn-pulang {
+      background: linear-gradient(135deg, var(--color-primary-orange), #d9680e);
+      color: #ffffff;
+      box-shadow: 0 10px 25px -5px rgba(244, 128, 32, 0.35);
+    }
+    .btn-absen.btn-disabled {
+      background: #e2e8f0;
+      color: #94a3b8;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .current-clock {
+      text-align: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--color-primary-green);
+      border-radius: 50%;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.3); opacity: 1; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .section-sublink {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-primary-green);
+    }
+
+    .schedule-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      padding: 16px 18px;
+      box-shadow: var(--shadow-card);
+      border: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+    .schedule-badge-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: var(--color-primary-green-light);
+      color: var(--color-primary-green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .schedule-badge-icon.off-icon {
+      background: var(--status-off-bg);
+      color: var(--status-off);
+    }
+    .schedule-info {
+      flex: 1;
+    }
+    .schedule-shift-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 3px;
+    }
+    .schedule-shift-time {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--color-primary-orange);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .schedule-shift-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .week-chips {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+      margin-top: 14px;
+      scrollbar-width: none;
+    }
+    .week-chips::-webkit-scrollbar {
+      display: none;
+    }
+    .day-chip {
+      min-width: 58px;
+      padding: 10px 8px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+    .day-chip.active-day {
+      background: var(--color-primary-green);
+      border-color: var(--color-primary-green);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(34, 159, 66, 0.25);
+    }
+    .day-chip-name {
+      font-size: 11px;
+      font-weight: 600;
+      color: inherit;
+      opacity: 0.85;
+    }
+    .day-chip-shift {
+      font-size: 12px;
+      font-weight: 800;
+      color: inherit;
+    }
+    .day-chip:not(.active-day) .day-chip-shift {
+      color: var(--color-primary-orange);
+    }
+    .day-chip.is-off:not(.active-day) .day-chip-shift {
+      color: var(--text-subtle);
+    }
+
+    /* Admin Management Panel in Home */
+    .admin-summary-box {
+      background: linear-gradient(135deg, #1e293b, #334155);
+      border-radius: var(--radius-lg);
+      padding: 16px 18px;
+      color: #ffffff;
+      margin-bottom: 20px;
+    }
+    .admin-summary-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .admin-summary-header h4 {
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #f8fafc;
+    }
+    .admin-crew-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .admin-crew-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      padding: 6px 10px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 8px;
+    }
+
+    /* =======================================================
+       TAB 2: RIWAYAT STYLES
+       ======================================================= */
+    .stats-summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .stat-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      padding: 12px 8px;
+      text-align: center;
+      border: 1px solid var(--border-light);
+      box-shadow: var(--shadow-sm);
+    }
+    .stat-number {
+      font-size: 18px;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 2px;
+    }
+    .stat-card.hadir .stat-number { color: var(--status-hadir); }
+    .stat-card.terlambat .stat-number { color: var(--status-terlambat); }
+    .stat-card.dinas .stat-number { color: var(--status-dinas); }
+    .stat-card.alpha .stat-number { color: var(--status-tidakhadir); }
+
+    .stat-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.2px;
+    }
+
+    .filters-wrapper {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    .filter-select-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: var(--shadow-sm);
+    }
+    .filter-select-box i {
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+    .filter-select-box select {
+      width: 100%;
+      border: none;
+      background: transparent;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-main);
+      outline: none;
+      cursor: pointer;
+    }
+
+    .timeline-container {
+      position: relative;
+      padding-left: 20px;
+      margin-top: 10px;
+    }
+    .timeline-container::before {
+      content: '';
+      position: absolute;
+      top: 12px;
+      bottom: 20px;
+      left: 7px;
+      width: 2px;
+      background: #cbd5e1;
+    }
+    .timeline-item {
+      position: relative;
+      margin-bottom: 14px;
+    }
+    .timeline-dot {
+      position: absolute;
+      left: -20px;
+      top: 16px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 3.5px solid var(--border-color);
+      z-index: 2;
+    }
+    .timeline-dot.hadir { border-color: var(--status-hadir); }
+    .timeline-dot.terlambat { border-color: var(--status-terlambat); }
+    .timeline-dot.dinas { border-color: var(--status-dinas); }
+    .timeline-dot.alpha { border-color: var(--status-tidakhadir); }
+    .timeline-dot.off { border-color: var(--status-off); }
+
+    .history-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      padding: 14px 16px;
+      box-shadow: var(--shadow-card);
+      border: 1px solid var(--border-light);
+    }
+    .history-card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .date-badge-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: var(--bg-app);
+      border-radius: var(--radius-sm);
+      padding: 6px 10px;
+      min-width: 48px;
+    }
+    .date-badge-day {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+    .date-badge-num {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--text-main);
+      line-height: 1.1;
+    }
+    .date-badge-month {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-subtle);
+    }
+    .punch-times-col {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .punch-block {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .punch-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .punch-time {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+    .status-tag {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      display: inline-block;
+      white-space: nowrap;
+      align-self: flex-start;
+    }
+    .status-tag.hadir { background: var(--status-hadir-bg); color: var(--status-hadir); }
+    .status-tag.terlambat { background: var(--status-terlambat-bg); color: var(--status-terlambat); }
+    .status-tag.dinas { background: var(--status-dinas-bg); color: var(--status-dinas); }
+    .status-tag.alpha { background: var(--status-tidakhadir-bg); color: var(--status-tidakhadir); }
+    .status-tag.off { background: var(--status-off-bg); color: var(--status-off); }
+
+    .history-card-divider {
+      border-top: 1px dashed var(--border-color);
+      margin: 8px 0;
+    }
+    .history-card-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .duration-text {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+    .notes-text {
+      font-size: 11px;
+      color: var(--text-muted);
+      background: var(--bg-app);
+      padding: 3px 8px;
+      border-radius: 6px;
+      max-width: 160px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      border: 1px dashed var(--border-color);
+      margin: 20px 0;
+    }
+    .empty-state i {
+      color: var(--text-subtle);
+      margin-bottom: 8px;
+    }
+    .empty-state h3 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 4px;
+    }
+    .empty-state p {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* =======================================================
+       TAB 3: PROFIL STYLES
+       ======================================================= */
+    .profile-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-xl);
+      padding: 30px 20px 26px 20px;
+      box-shadow: var(--shadow-card);
+      border: 1px solid var(--border-light);
+      text-align: center;
+      margin-top: 10px;
+      position: relative;
+    }
+    .profile-avatar-wrap {
+      width: 84px;
+      height: 84px;
+      margin: 0 auto 16px auto;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--color-primary-green-light), var(--color-primary-orange-light));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 3px solid #ffffff;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+      position: relative;
+    }
+    .avatar-initial {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--color-primary-green);
+    }
+    .profile-name {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 6px;
+      letter-spacing: -0.3px;
+    }
+    .profile-nim-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg-app);
+      border: 1px solid var(--border-color);
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+    .profile-nim-badge span {
+      color: var(--color-primary-orange);
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+    .profile-info-list {
+      border-top: 1px solid var(--border-light);
+      padding-top: 18px;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .profile-info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+    }
+    .info-label {
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    .info-val {
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .json-data-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      padding: 16px 18px;
+      box-shadow: var(--shadow-card);
+      border: 1px solid var(--border-light);
+      margin-top: 16px;
+      text-align: left;
+    }
+    .json-data-card-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+    .json-data-card-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+    .json-actions-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .btn-secondary-action {
+      background: var(--bg-app);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    /* Modal / Bottom Sheet Universal Styles */
+    .switch-sheet-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.65);
+      z-index: 999;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      backdrop-filter: blur(2px);
+    }
+    .switch-sheet-backdrop.show {
+      display: flex !important;
+    }
+    .switch-sheet {
+      width: 100%;
+      max-width: 440px;
+      background: #ffffff;
+      border-radius: 24px 24px 0 0;
+      padding: 20px 20px 30px 20px;
+      box-shadow: 0 -10px 40px rgba(0,0,0,0.3);
+      animation: slideUpModal 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      box-sizing: border-box;
+      position: relative;
+    }
+    @keyframes slideUpModal {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+    .sheet-handle {
+      width: 44px;
+      height: 4px;
+      background: #cbd5e1;
+      border-radius: 4px;
+      margin: 0 auto 16px auto;
+    }
+    .sheet-title {
+      font-size: 16px;
+      font-weight: 800;
+      margin-bottom: 6px;
+      color: var(--text-main);
+    }
+    .sheet-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    /* =======================================================
+       BOTTOM NAVIGATION BAR (3 Tabs Only)
+       ======================================================= */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      max-width: 440px;
+      background: #ffffff;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 8px 10px calc(8px + env(safe-area-inset-bottom, 0px)) 10px;
+      z-index: 50;
+      box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.05);
+    }
+    .nav-tab-btn {
+      flex: 1;
+      background: transparent;
+      border: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 0;
+      cursor: pointer;
+      color: var(--text-muted);
+      transition: all 0.2s;
+    }
+    .nav-tab-btn i {
+      width: 22px;
+      height: 22px;
+      transition: all 0.2s;
+    }
+    .nav-tab-btn span {
+      font-size: 11px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .nav-tab-btn.active {
+      color: var(--color-primary-green);
+    }
+    .nav-tab-btn.active span {
+      font-weight: 800;
+    }
+    .nav-tab-btn.active i {
+      transform: translateY(-2px);
+    }
+
+    /* Toast Notification */
+    .toast-popup {
+      position: fixed;
+      top: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-100px);
+      background: #1e293b;
+      color: #ffffff;
+      padding: 12px 20px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+      z-index: 200;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s;
+      opacity: 0;
+      pointer-events: none;
+      max-width: 90%;
+    }
+    .toast-popup.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+    .toast-popup.success {
+      background: var(--color-primary-green-dark);
+    }
+    .toast-popup.warning {
+      background: var(--color-primary-orange);
+    }
+    .toast-popup.error {
+      background: #dc2626;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Mobile Viewport Container -->
+  <div class="mobile-frame">
+
+    <!-- ==========================================
+         SCREEN 1: LOGIN (NIK Detection + Password)
+         ========================================== -->
+    <div class="login-container" id="loginScreen">
+      <!-- Logo Kang Jus -->
+      <div class="login-logo-box">
+        <img src="logo-kang-jus.jpg" alt="Kang Jus Logo" class="login-logo-img" onerror="this.src='https://images.unsplash.com/photo-1613478223719-2ab802602423?w=100&h=100&fit=crop'">
+      </div>
+
+      <div class="login-title-wrap">
+        <h1 class="login-brand-title">KANG <span>JUS</span></h1>
+        <p class="login-sub">Sistem Absensi Presensi Pegawai</p>
+      </div>
+
+      <!-- Login Form Card -->
+      <div class="login-card">
+        <form id="loginForm" onsubmit="handleLoginSubmit(event)">
+          <!-- NIK Input -->
+          <div class="form-group">
+            <label class="form-label" for="loginNikInput">
+              <span>Nomor Induk Karyawan (NIK)</span>
+            </label>
+            <div class="input-wrapper">
+              <i data-lucide="id-card"></i>
+              <input type="text" id="loginNikInput" class="form-input" placeholder="Masukkan NIK Anda..." autocomplete="off" oninput="handleNikInput(this.value)">
+            </div>
+            <!-- Role Notice (Auto-detected) -->
+            <div id="roleNoticeAdmin" class="role-badge-notice admin">
+              <i data-lucide="shield-alert" style="width: 14px; height: 14px;"></i>
+              <span>Akun Management (Admin) terdeteksi. Butuh Password.</span>
+            </div>
+            <div id="roleNoticeCrew" class="role-badge-notice crew">
+              <i data-lucide="user-check" style="width: 14px; height: 14px;"></i>
+              <span>Akun Crew terdeteksi. Langsung tekan Masuk.</span>
+            </div>
+          </div>
+
+          <!-- Password Input (Appears only for Management/Admin) -->
+          <div class="form-group" id="passwordGroup">
+            <label class="form-label" for="loginPasswordInput">
+              <span>Password Admin</span>
+            </label>
+            <div class="input-wrapper">
+              <i data-lucide="lock"></i>
+              <input type="password" id="loginPasswordInput" class="form-input" placeholder="Masukkan password admin..." autocomplete="new-password">
+            </div>
+          </div>
+
+          <!-- Login Button -->
+          <button type="submit" class="btn-login" id="loginSubmitBtn">
+            <i data-lucide="log-in" style="width: 18px; height: 18px;"></i>
+            <span id="loginBtnText">Masuk Sekarang</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Quick Fill NIK Chips Helper (Dinamis dari appData.employees) -->
+      <div class="quick-chips-wrap">
+        <div class="quick-chips-title">Pilih Cepat NIK Pegawai</div>
+        <div class="quick-chips-grid" id="loginQuickChipsContainer">
+          <!-- Otomatis di-render secara dinamis dari database karyawan (termasuk karyawan baru) -->
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ==========================================
+         SCREEN 2: MAIN APP (Home, Riwayat, Profil)
+         ========================================== -->
+    <div class="app-screen" id="appScreen">
+
+      <!-- Top App Bar -->
+      <header class="app-header">
+        <div class="brand-wrap">
+          <img src="logo-kang-jus.jpg" alt="Kang Jus Logo" class="brand-logo-img">
+          <div class="brand-text">
+            <h1>KANG <span>JUS</span></h1>
+            <span class="role-pill-badge" id="headerRoleBadge">CREW</span>
+          </div>
+        </div>
+        <button class="btn-logout" onclick="handleLogout()" title="Keluar dari Akun">
+          <i data-lucide="log-out" style="width: 13px; height: 13px;"></i>
+          <span>Keluar</span>
+        </button>
+      </header>
+
+      <!-- TAB 1: HOME (Absensi & Jadwal Hari Ini) -->
+      <main id="tab-home" class="page-content active">
+        <!-- Greeting Header -->
+        <section class="greeting-section">
+          <div class="greeting-badge">
+            <i data-lucide="sun-medium" style="width: 14px; height: 14px;"></i>
+            <span id="greetingTimeText">Selamat Pagi</span>
+          </div>
+          <h2 class="greeting-title" id="homeGreetingName">Halo, Nama Pegawai</h2>
+          <p class="greeting-date" id="homeCurrentDate">Senin, 23 November 2026</p>
+        </section>
+
+        <!-- Admin Management Overview Banner (Visible only for Admin/SPV) -->
+        <div class="admin-summary-box" id="adminOverviewBox" style="display: none;">
+          <div class="admin-summary-header">
+            <h4>
+              <i data-lucide="shield-check" style="width: 16px; height: 16px; color: var(--color-primary-orange);"></i>
+              Panel Management Outlet
+            </h4>
+            <span style="font-size: 11px; background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 10px;">SPV Active</span>
+          </div>
+          <p style="font-size: 11px; color: #cbd5e1;">Pantau shift seluruh crew Kang Jus hari ini:</p>
+          <div class="admin-crew-list" id="adminCrewScheduleList">
+            <!-- Populated for Admin -->
+          </div>
+        </div>
+
+        <!-- Tombol Aksi Menu Admin (Ditempatkan di antara Panel Management Outlet dan Status Presensi Hari Ini) -->
+        <div id="adminActionButtonsRow" style="display: none; margin-bottom: 18px;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <button type="button" class="btn-secondary-action" style="background: #ffffff; border: 1.5px solid var(--color-primary-green); color: var(--color-primary-green); padding: 12px 10px; border-radius: var(--radius-md); box-shadow: var(--shadow-sm); font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer;" onclick="openScheduleEditorModal()">
+              <i data-lucide="table" style="width: 16px; height: 16px;"></i>
+              <span>Kelola Jadwal & Tim</span>
+            </button>
+            <button type="button" class="btn-secondary-action" style="background: #ffffff; border: 1.5px solid var(--color-primary-orange); color: var(--color-primary-orange); padding: 12px 10px; border-radius: var(--radius-md); box-shadow: var(--shadow-sm); font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer;" onclick="openPrintReportModal()">
+              <i data-lucide="printer" style="width: 16px; height: 16px;"></i>
+              <span>Cetak Rekap Absensi</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Status Absensi Card -->
+        <section class="status-card">
+          <div class="status-card-header">
+            <span class="status-card-label">Status Presensi Hari Ini</span>
+            <span class="status-pill belum" id="homeStatusPill">
+              <span class="live-dot" style="background: currentColor;"></span>
+              <span id="homeStatusPillText">Belum Absen</span>
+            </span>
+          </div>
+
+          <!-- Clock times: Masuk & Pulang -->
+          <div class="time-grid">
+            <div class="time-box">
+              <div class="time-box-title">
+                <i data-lucide="log-in" style="width: 14px; height: 14px; color: var(--color-primary-green);"></i>
+                Jam Masuk
+              </div>
+              <div class="time-box-value" id="homeClockInDisplay">--:--</div>
+              <div class="time-box-sub" id="homeClockInSub">Shift Mulai: 09:00</div>
+            </div>
+            <div class="time-box">
+              <div class="time-box-title">
+                <i data-lucide="log-out" style="width: 14px; height: 14px; color: var(--color-primary-orange);"></i>
+                Jam Pulang
+              </div>
+              <div class="time-box-value" id="homeClockOutDisplay">--:--</div>
+              <div class="time-box-sub" id="homeClockOutSub">Shift Selesai: 17:00</div>
+            </div>
+          </div>
+
+          <!-- Action Button Absen -->
+          <button class="btn-absen btn-masuk" id="homeActionButton" onclick="handleAttendanceAction()">
+            <i data-lucide="fingerprint" id="homeActionIcon"></i>
+            <span id="homeActionText">Absen Masuk Sekarang</span>
+          </button>
+
+          <div class="current-clock">
+            <span class="live-dot"></span>
+            <span id="liveDigitalClock">09:31:00 WIB</span>
+            <span>•</span>
+            <span id="scheduleStatusSummary">Jadwal: Shift Pagi</span>
+          </div>
+        </section>
+
+        <!-- Jadwal Hari Ini Card -->
+        <section>
+          <div class="section-title">
+            <span>Jadwal Kerja Anda Hari Ini</span>
+            <span class="section-sublink" id="currentWeekIndicator">Minggu 1</span>
+          </div>
+
+          <div class="schedule-card" id="todayScheduleCard">
+            <div class="schedule-badge-icon" id="todayScheduleIcon">
+              <i data-lucide="calendar-clock"></i>
+            </div>
+            <div class="schedule-info">
+              <div class="schedule-shift-title" id="todayScheduleTitle">Shift Pagi</div>
+              <div class="schedule-shift-time" id="todayScheduleHours">
+                <i data-lucide="clock" style="width: 13px; height: 13px;"></i>
+                <span id="todayHoursText">09:00:00 - 17:00:00 WIB</span>
+              </div>
+              <div class="schedule-shift-desc" id="todayScheduleDesc">Outlet Kang Jus</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 7 Days Quick Schedule Preview -->
+        <section style="margin-top: 20px;">
+          <div class="section-title">
+            <span>Jadwal Rolling Shift Mingguan</span>
+            <span style="font-size: 11px; color: var(--text-muted);">M1 / M2</span>
+          </div>
+          <div class="week-chips" id="weekScheduleChips"></div>
+        </section>
+
+        <!-- Info Card Note -->
+        <div class="note-card" style="background: #faf5ff; border: 1px dashed #d8b4fe; border-radius: var(--radius-md); padding: 12px 14px; display: flex; gap: 10px; margin-top: 16px;">
+          <i data-lucide="info" style="width: 16px; height: 16px; color: #7e22ce; flex-shrink: 0; margin-top: 1px;"></i>
+          <p style="font-size: 12px; color: #6b21a8; line-height: 1.4;">Pastikan melakukan presensi masuk saat tiba di outlet dan absen pulang tepat waktu saat pergantian shift.</p>
+        </div>
+      </main>
+
+      <!-- TAB 2: RIWAYAT (Timeline & Ringkasan) -->
+      <main id="tab-riwayat" class="page-content">
+        <div class="section-title" style="margin-bottom: 14px;">
+          <div>
+            <span style="font-size: 19px; font-weight: 800;">Riwayat Absensi</span>
+            <p style="font-size: 12px; color: var(--text-muted); font-weight: 500; margin-top: 2px;">Catatan kehadiran tersimpan dalam data JSON</p>
+          </div>
+        </div>
+
+        <!-- 4 Stats Summary Cards Grid -->
+        <div class="stats-summary-grid">
+          <div class="stat-card hadir">
+            <div class="stat-number" id="statCountHadir">0</div>
+            <div class="stat-label">Hadir</div>
+          </div>
+          <div class="stat-card terlambat">
+            <div class="stat-number" id="statCountTerlambat">0</div>
+            <div class="stat-label">Terlambat</div>
+          </div>
+          <div class="stat-card dinas">
+            <div class="stat-number" id="statCountDinas">0</div>
+            <div class="stat-label">Dinas</div>
+          </div>
+          <div class="stat-card alpha">
+            <div class="stat-number" id="statCountAlpha">0</div>
+            <div class="stat-label">Tidak Hadir</div>
+          </div>
+        </div>
+
+        <!-- Filters: Period (Bulan) & Status -->
+        <div class="filters-wrapper">
+          <div class="filter-select-box">
+            <i data-lucide="calendar" style="width: 14px; height: 14px;"></i>
+            <select id="filterMonthSelect" onchange="renderHistoryTimeline()">
+              <option value="current">November 2026</option>
+              <option value="prev">Oktober 2026</option>
+              <option value="all">Semua Periode</option>
+            </select>
+          </div>
+          <div class="filter-select-box">
+            <i data-lucide="filter" style="width: 14px; height: 14px;"></i>
+            <select id="filterStatusSelect" onchange="renderHistoryTimeline()">
+              <option value="ALL">Semua Status</option>
+              <option value="HADIR">Hadir</option>
+              <option value="TERLAMBAT">Terlambat</option>
+              <option value="DINAS">Dinas Luar</option>
+              <option value="ALPHA">Tidak Hadir</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Timeline List -->
+        <div class="timeline-container" id="historyTimelineList"></div>
+      </main>
+
+      <!-- TAB 3: PROFIL (Hanya Nama & NIK / NIM Sesuai Spek) -->
+      <main id="tab-profil" class="page-content">
+        <div class="section-title" style="margin-bottom: 14px;">
+          <span style="font-size: 19px; font-weight: 800;">Profil Pegawai</span>
+        </div>
+
+        <div class="profile-card">
+          <div class="profile-avatar-wrap">
+            <span class="avatar-initial" id="profileAvatarInitial">A</span>
+          </div>
+          <h3 class="profile-name" id="profileDisplayName">NAMA PEGAWAI</h3>
+          
+          <div class="profile-nim-badge">
+            NIM / NIK: <span id="profileDisplayNIM">00000000</span>
+          </div>
+
+          <div class="profile-info-list">
+            <div class="profile-info-row">
+              <span class="info-label">Posisi / Jabatan</span>
+              <span class="info-val" id="profilePosition">SPV</span>
+            </div>
+            <div class="profile-info-row">
+              <span class="info-label">Divisi / Grup</span>
+              <span class="info-val" id="profileGroup">MANAGEMENT</span>
+            </div>
+            <div class="profile-info-row">
+              <span class="info-label">Hak Akses</span>
+              <span class="info-val" id="profileRoleBadgeText" style="color: var(--color-primary-green);">CREW</span>
+            </div>
+            <div class="profile-info-row">
+              <span class="info-label">Unit Kerja</span>
+              <span class="info-val" style="color: var(--color-primary-green);">Outlet Kang Jus</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- JSON Data Storage Controller -->
+        <div class="json-data-card">
+          <div class="json-data-card-title">
+            <i data-lucide="database" style="width: 16px; height: 16px; color: var(--color-primary-green);"></i>
+            <span>Penyimpanan Database JSON</span>
+          </div>
+          <p class="json-data-card-desc">
+            Data absensi tersinkronisasi otomatis dalam format JSON (LocalStorage / file data.json).
+          </p>
+          <div class="json-actions-grid">
+            <button class="btn-secondary-action" onclick="exportDataToJSON()">
+              <i data-lucide="download" style="width: 14px; height: 14px; color: var(--color-primary-green);"></i>
+              <span>Unduh JSON</span>
+            </button>
+            <button class="btn-secondary-action" onclick="handleLogout()">
+              <i data-lucide="log-out" style="width: 14px; height: 14px; color: #ef4444;"></i>
+              <span>Ganti Akun</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Version Footer -->
+        <div style="text-align: center; margin-top: 24px;">
+          <p style="font-size: 11px; color: var(--text-subtle); font-weight: 600;">Kang Jus Attendance Web Mobile v1.2.0</p>
+          <p style="font-size: 10px; color: var(--text-subtle);">Sistem Autentikasi NIK & Password Admin</p>
+        </div>
+      </main>
+
+      <!-- BOTTOM NAVIGATION BAR (3 Tabs Only: Home, Riwayat, Profil) -->
+      <nav class="bottom-nav">
+        <button class="nav-tab-btn active" id="nav-btn-home" onclick="switchTab('home')">
+          <i data-lucide="home"></i>
+          <span>Home</span>
+        </button>
+        <button class="nav-tab-btn" id="nav-btn-riwayat" onclick="switchTab('riwayat')">
+          <i data-lucide="clipboard-list"></i>
+          <span>Riwayat</span>
+        </button>
+        <button class="nav-tab-btn" id="nav-btn-profil" onclick="switchTab('profil')">
+          <i data-lucide="user"></i>
+          <span>Profil</span>
+        </button>
+      </nav>
+
+    </div>
+
+    <!-- =======================================================
+         MODAL 1: EDIT JADWAL & KARYAWAN BERBENTUK TABEL EXCEL
+         ======================================================= -->
+    <div class="switch-sheet-backdrop" id="scheduleEditorModalBackdrop" onclick="closeScheduleEditorModal(event)">
+      <div class="switch-sheet" style="max-height: 90vh; overflow-y: auto; padding-bottom: 24px;" onclick="event.stopPropagation()">
+        <div class="sheet-handle"></div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <h4 class="sheet-title" style="margin: 0; display: flex; align-items: center; gap: 6px;">
+            <i data-lucide="table" style="color: var(--color-primary-green); width: 20px; height: 20px;"></i>
+            <span>Tabel Jadwal Kerja Karyawan</span>
+          </h4>
+          <button type="button" onclick="closeScheduleEditorModal()" style="background: none; border: none; cursor: pointer; color: var(--text-muted);">
+            <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+          </button>
+        </div>
+        <p class="sheet-desc" style="margin-bottom: 12px;">Format tabel sesuai excel: GROUP, NIK, NAMA, POSISI, Shift Senin-Ahad (M1 & M2). Ketik 'X' untuk hari libur (OFF).</p>
+
+        <!-- Mode Tab M1 & M2 and Action Toolbar -->
+        <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+          <button id="btnTabTableM1" class="btn-secondary-action" style="flex: 1; background: var(--color-primary-green); color: #fff; border-color: var(--color-primary-green);" onclick="switchTableWeek('M1')">
+            Siklus Minggu 1 (M1)
+          </button>
+          <button id="btnTabTableM2" class="btn-secondary-action" style="flex: 1; background: #fff; color: var(--text-main);" onclick="switchTableWeek('M2')">
+            Siklus Minggu 2 (M2)
+          </button>
+        </div>
+
+        <!-- Quick Action Toolbar: Tambah Baris Karyawan & Tombol Undo -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 8px;">
+          <button type="button" class="btn-secondary-action" style="padding: 7px 12px; background: #ecfdf5; border: 1.5px solid var(--color-primary-green); color: var(--color-primary-green-dark); font-size: 11px; font-weight: 700; border-radius: 8px; display: flex; align-items: center; gap: 5px;" onclick="addNewEmployeeRow()">
+            <i data-lucide="user-plus" style="width: 14px; height: 14px;"></i>
+            <span>+ Tambah Baris Karyawan</span>
+          </button>
+          
+          <button type="button" id="btnUndoTableAction" class="btn-secondary-action" style="padding: 7px 12px; background: #fff7ed; border: 1.5px solid var(--color-primary-orange); color: var(--color-primary-orange); font-size: 11px; font-weight: 700; border-radius: 8px; display: flex; align-items: center; gap: 5px;" onclick="undoTableAction()" title="Kembalikan perubahan sebelum ini">
+            <i data-lucide="undo-2" style="width: 14px; height: 14px;"></i>
+            <span>Undo (<span id="undoCountDisplay">0</span>)</span>
+          </button>
+        </div>
+
+        <!-- Responsive Excel Table Wrapper -->
+        <div style="overflow-x: auto; border: 1px solid var(--border-color); border-radius: var(--radius-sm); margin-bottom: 14px; background: #fff;">
+          <table id="excelScheduleTable" style="width: 100%; border-collapse: collapse; font-size: 11px; white-space: nowrap;">
+            <thead>
+              <tr style="background: #f8fafc; border-bottom: 2px solid var(--border-color); text-align: left;">
+                <th style="padding: 8px 10px; border-right: 1px solid var(--border-color);">GROUP</th>
+                <th style="padding: 8px 10px; border-right: 1px solid var(--border-color);">NIK</th>
+                <th style="padding: 8px 10px; border-right: 1px solid var(--border-color);">NAME</th>
+                <th style="padding: 8px 10px; border-right: 1px solid var(--border-color);">POSITION</th>
+                <th style="padding: 8px 6px; border-right: 1px solid var(--border-color); text-align: center;">Senin</th>
+                <th style="padding: 8px 6px; border-right: 1px solid var(--border-color); text-align: center;">Selasa</th>
+                <th style="padding: 8px 6px; border-right: 1px solid var(--border-color); text-align: center;">Rabu</th>
+                <th style="padding: 8px 6px; border-right: 1px solid var(--border-color); text-align: center;">Kamis</th>
+                <th style="padding: 8px 6px; border-right: 1px solid var(--border-color); text-align: center;">Jumat</th>
+                <th style="padding: 8px 6px; border-right: 1px solid var(--border-color); text-align: center;">Sabtu</th>
+                <th style="padding: 8px 6px; border-right: 1px solid var(--border-color); text-align: center;">Ahad</th>
+                <th style="padding: 8px 10px; text-align: center;">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="excelScheduleTableBody">
+              <!-- Dynamically populated rows -->
+            </tbody>
+          </table>
+        </div>
+
+        <div style="display: flex; gap: 8px;">
+          <button type="button" class="btn-login" style="margin: 0; background: var(--color-primary-green);" onclick="saveScheduleTableChanges()">
+            <i data-lucide="check" style="width: 16px; height: 16px;"></i>
+            <span>Simpan Perubahan Jadwal</span>
+          </button>
+          <button type="button" class="btn-secondary-action" style="padding: 12px 14px;" onclick="closeScheduleEditorModal()">
+            <span>Tutup</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- =======================================================
+         MODAL 2: CETAK REKAP LAPORAN BULANAN (RENTANG TANGGAL)
+         ======================================================= -->
+    <div class="switch-sheet-backdrop" id="printReportModalBackdrop" onclick="closePrintReportModal(event)">
+      <div class="switch-sheet" style="max-height: 90vh; overflow-y: auto; padding-bottom: 24px;" onclick="event.stopPropagation()">
+        <div class="sheet-handle"></div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <h4 class="sheet-title" style="margin: 0; display: flex; align-items: center; gap: 6px;">
+            <i data-lucide="printer" style="color: var(--color-primary-orange); width: 20px; height: 20px;"></i>
+            <span>Cetak Rekap Absensi Bulanan</span>
+          </h4>
+          <button type="button" onclick="closePrintReportModal()" style="background: none; border: none; cursor: pointer; color: var(--text-muted);">
+            <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+          </button>
+        </div>
+        <p class="sheet-desc" style="margin-bottom: 14px;">Tentukan rentang tanggal untuk menghitung total hadir, telat, dan jam kerja pegawai.</p>
+
+        <!-- Date Range Filter -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px;">
+          <div>
+            <label style="font-size: 11px; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 4px;">Dari Tanggal</label>
+            <input type="date" id="printStartDate" class="form-input" style="padding: 10px 12px; font-size: 12px;" onchange="calculateReportData()">
+          </div>
+          <div>
+            <label style="font-size: 11px; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 4px;">Sampai Tanggal</label>
+            <input type="date" id="printEndDate" class="form-input" style="padding: 10px 12px; font-size: 12px;" onchange="calculateReportData()">
+          </div>
+        </div>
+
+        <!-- Filter Pegawai Pilihan -->
+        <div style="margin-bottom: 14px;">
+          <label style="font-size: 11px; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 4px;">Pilih Pegawai</label>
+          <select id="printEmployeeFilter" class="form-input" style="padding: 10px 12px; font-size: 12px;" onchange="calculateReportData()">
+            <option value="ALL">Semua Karyawan (Seluruh Outlet)</option>
+            <!-- Populated via JS -->
+          </select>
+        </div>
+
+        <!-- Preview Rekap Container (This is what will be printed) -->
+        <div id="printableReportArea" style="background: #ffffff; border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 14px; margin-bottom: 16px;">
+          <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 8px; margin-bottom: 12px;">
+            <h3 style="font-size: 15px; font-weight: 800; color: #111827; margin: 0; text-transform: uppercase;">LAPORAN REKAPITULASI PRESENSI PEGAWAI</h3>
+            <p style="font-size: 12px; font-weight: 700; color: var(--color-primary-green); margin: 2px 0 0 0;">OUTLET KANG JUS</p>
+            <p id="reportPeriodText" style="font-size: 11px; color: #4b5563; margin-top: 2px;">Periode: 01 Nov 2026 s/d 30 Nov 2026</p>
+          </div>
+
+          <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
+              <thead>
+                <tr style="background: #f3f4f6; border-bottom: 1.5px solid #d1d5db; text-align: left;">
+                  <th style="padding: 6px 8px; border: 1px solid #d1d5db;">Nama Pegawai</th>
+                  <th style="padding: 6px 8px; border: 1px solid #d1d5db;">NIK</th>
+                  <th style="padding: 6px 8px; border: 1px solid #d1d5db;">Posisi</th>
+                  <th style="padding: 6px 8px; border: 1px solid #d1d5db; text-align: center; color: var(--color-primary-green);">Hadir</th>
+                  <th style="padding: 6px 8px; border: 1px solid #d1d5db; text-align: center; color: var(--color-primary-orange);">Telat</th>
+                  <th style="padding: 6px 8px; border: 1px solid #d1d5db; text-align: center; color: #0284c7;">Dinas</th>
+                  <th style="padding: 6px 8px; border: 1px solid #d1d5db; text-align: center; color: #ef4444;">Alpha</th>
+                </tr>
+              </thead>
+              <tbody id="reportTableBody">
+                <!-- Calculated preview -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 8px;">
+          <button type="button" class="btn-login" style="margin: 0; background: var(--color-primary-orange);" onclick="executePrintReport()">
+            <i data-lucide="printer" style="width: 16px; height: 16px;"></i>
+            <span>Cetak / Simpan PDF</span>
+          </button>
+          <button type="button" class="btn-secondary-action" style="padding: 12px 14px;" onclick="closePrintReportModal()">
+            <span>Tutup</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- =======================================================
+         MODAL 3: SCANNER KAMERA QR CODE PRESENSI OUTLET
+         ======================================================= -->
+    <div class="switch-sheet-backdrop" id="qrScannerModalBackdrop">
+      <div class="switch-sheet" style="padding-bottom: 24px; text-align: center;" onclick="event.stopPropagation()">
+        <div class="sheet-handle"></div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <h4 class="sheet-title" style="margin: 0; display: flex; align-items: center; gap: 6px;">
+            <i data-lucide="scan" style="color: var(--color-primary-green); width: 20px; height: 20px;"></i>
+            <span id="qrScannerModalTitle">Scan QR Toko Kang Jus</span>
+          </h4>
+          <button type="button" onclick="stopQrScanner()" style="background: none; border: none; cursor: pointer; color: var(--text-muted);">
+            <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+          </button>
+        </div>
+        <p class="sheet-desc" style="margin-bottom: 14px;">Arahkan kamera ke QR Code yang terpajang di outlet toko untuk melakukan presensi.</p>
+
+        <!-- QR Scanner Viewport Element -->
+        <div id="qrReaderContainer" style="width: 100%; max-width: 320px; margin: 0 auto 14px auto; border-radius: var(--radius-md); overflow: hidden; background: #000; min-height: 250px; position: relative;">
+          <!-- html5-qrcode video renders here -->
+        </div>
+
+        <div id="qrScannerStatusNotice" style="font-size: 11px; font-weight: 600; color: var(--text-muted); margin-bottom: 14px;">
+          Kamera aktif. Mencari QR Code Toko...
+        </div>
+
+        <button type="button" class="btn-secondary-action" style="width: 100%; padding: 12px; border-radius: var(--radius-md);" onclick="stopQrScanner()">
+          <span>Batal</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Toast Feedback Popup -->
+    <div class="toast-popup" id="toastNotification">
+      <i data-lucide="check-circle-2" id="toastIcon"></i>
+      <span id="toastMsg">Notifikasi</span>
+    </div>
+
+  </div>
+
+  <script>
+    /* =======================================================
+       DATA STORE SYSTEM & DATABASE JSON
+       ======================================================= */
+    const STORAGE_KEY = "KANG_JUS_APP_DATA_V2";
+    const SESSION_USER_KEY = "KANG_JUS_ACTIVE_USER";
+
+    const INITIAL_JSON_DATA = {
+      employees: [
+        {
+          nik: "50126143",
+          name: "AGUNG KURNIA RAMADAN",
+          position: "SPV",
+          group: "MANAGEMENT",
+          role: "ADMIN",
+          password: "1234",
+          scheduleM1: {
+            Senin: "09:00:00",
+            Selasa: "X",
+            Rabu: "15:00:00",
+            Kamis: "15:00:00",
+            Jumat: "09:00:00",
+            Sabtu: "09:00:00",
+            Ahad: "15:00:00",
+            offCount: 1
+          },
+          scheduleM2: {
+            Senin: "15:00:00",
+            Selasa: "09:00:00",
+            Rabu: "X",
+            Kamis: "15:00:00",
+            Jumat: "09:00:00",
+            Sabtu: "15:00:00",
+            Ahad: "15:00:00",
+            offCount: 1
+          }
+        },
+        {
+          nik: "210126146",
+          name: "ERMA DAYANTI",
+          position: "CREW",
+          group: "CREW",
+          role: "CREW",
+          scheduleM1: {
+            Senin: "15:00:00",
+            Selasa: "09:00:00",
+            Rabu: "X",
+            Kamis: "15:00:00",
+            Jumat: "09:00:00",
+            Sabtu: "15:00:00",
+            Ahad: "09:00:00",
+            offCount: 1
+          },
+          scheduleM2: {
+            Senin: "09:00:00",
+            Selasa: "X",
+            Rabu: "15:00:00",
+            Kamis: "15:00:00",
+            Jumat: "15:00:00",
+            Sabtu: "09:00:00",
+            Ahad: "15:00:00",
+            offCount: 1
+          }
+        },
+        {
+          nik: "290126149",
+          name: "INDAH NOVIANTI",
+          position: "CREW",
+          group: "CREW",
+          role: "CREW",
+          scheduleM1: {
+            Senin: "X",
+            Selasa: "15:00:00",
+            Rabu: "15:00:00",
+            Kamis: "09:00:00",
+            Jumat: "15:00:00",
+            Sabtu: "09:00:00",
+            Ahad: "15:00:00",
+            offCount: 1
+          },
+          scheduleM2: {
+            Senin: "15:00:00",
+            Selasa: "15:00:00",
+            Rabu: "09:00:00",
+            Kamis: "X",
+            Jumat: "15:00:00",
+            Sabtu: "09:00:00",
+            Ahad: "09:00:00",
+            offCount: 1
+          }
+        },
+        {
+          nik: "130626165",
+          name: "FITRI AYU PURNAMA",
+          position: "CREW",
+          group: "CREW",
+          role: "CREW",
+          scheduleM1: {
+            Senin: "15:00:00",
+            Selasa: "15:00:00",
+            Rabu: "09:00:00",
+            Kamis: "X",
+            Jumat: "15:00:00",
+            Sabtu: "15:00:00",
+            Ahad: "09:00:00",
+            offCount: 1
+          },
+          scheduleM2: {
+            Senin: "X",
+            Selasa: "15:00:00",
+            Rabu: "15:00:00",
+            Kamis: "09:00:00",
+            Jumat: "09:00:00",
+            Sabtu: "15:00:00",
+            Ahad: "09:00:00",
+            offCount: 1
+          }
+        }
+      ],
+      attendanceLogs: [
+        {
+          nik: "50126143",
+          date: "2026-11-22",
+          dayName: "Ahad",
+          dateNum: 22,
+          monthName: "Nov",
+          inTime: "14:55:12",
+          outTime: "23:04:10",
+          duration: "8 Jam 9 Menit",
+          notes: "Auto-Apel",
+          statusType: "HADIR",
+          statusText: "Hadir Tepat Waktu"
+        },
+        {
+          nik: "50126143",
+          date: "2026-11-21",
+          dayName: "Sabtu",
+          dateNum: 21,
+          monthName: "Nov",
+          inTime: "08:52:19",
+          outTime: "17:02:44",
+          duration: "8 Jam 10 Menit",
+          notes: "Auto-Apel",
+          statusType: "HADIR",
+          statusText: "Hadir Tepat Waktu"
+        },
+        {
+          nik: "50126143",
+          date: "2026-11-20",
+          dayName: "Jumat",
+          dateNum: 20,
+          monthName: "Nov",
+          inTime: "09:12:05",
+          outTime: "17:05:00",
+          duration: "7 Jam 53 Menit",
+          notes: "Terlambat 12 Menit",
+          statusType: "TERLAMBAT",
+          statusText: "Terlambat"
+        },
+        {
+          nik: "210126146",
+          date: "2026-11-22",
+          dayName: "Ahad",
+          dateNum: 22,
+          monthName: "Nov",
+          inTime: "08:56:00",
+          outTime: "17:03:00",
+          duration: "8 Jam 7 Menit",
+          notes: "Auto-Apel",
+          statusType: "HADIR",
+          statusText: "Hadir Tepat Waktu"
+        },
+        {
+          nik: "290126149",
+          date: "2026-11-22",
+          dayName: "Ahad",
+          dateNum: 22,
+          monthName: "Nov",
+          inTime: "14:50:00",
+          outTime: "23:00:00",
+          duration: "8 Jam 10 Menit",
+          notes: "Auto-Apel",
+          statusType: "HADIR",
+          statusText: "Hadir Tepat Waktu"
+        },
+        {
+          nik: "130626165",
+          date: "2026-11-22",
+          dayName: "Ahad",
+          dateNum: 22,
+          monthName: "Nov",
+          inTime: "08:52:00",
+          outTime: "17:01:00",
+          duration: "8 Jam 9 Menit",
+          notes: "Auto-Apel",
+          statusType: "HADIR",
+          statusText: "Hadir Tepat Waktu"
+        }
+      ]
+    };
+
+    let appData = null;
+    let currentUser = null;
+    let isWeek2 = false;
+
+    // Today attendance state
+    let todayAttendanceState = {
+      clockIn: null,
+      clockOut: null,
+      status: "BELUM"
+    };
+
+    function loadAppData() {
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          appData = JSON.parse(stored);
+        } else {
+          appData = JSON.parse(JSON.stringify(INITIAL_JSON_DATA));
+          saveAppData();
+        }
+      } catch (e) {
+        appData = JSON.parse(JSON.stringify(INITIAL_JSON_DATA));
+      }
+    }
+
+    function saveAppData() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appData, null, 2));
+      } catch (e) {
+        console.error("Gagal simpan JSON:", e);
+      }
+    }
+
+    /* =======================================================
+       LOGIN LOGIC: DETEKSI NIK (ADMIN vs CREW)
+       ======================================================= */
+    function handleNikInput(val) {
+      const cleanNik = val.trim();
+      const emp = appData.employees.find(e => e.nik === cleanNik);
+      const roleNoticeAdmin = document.getElementById('roleNoticeAdmin');
+      const roleNoticeCrew = document.getElementById('roleNoticeCrew');
+      const passwordGroup = document.getElementById('passwordGroup');
+      const loginBtnText = document.getElementById('loginBtnText');
+
+      if (emp) {
+        if (emp.role === "ADMIN" || emp.group === "MANAGEMENT") {
+          roleNoticeAdmin.style.display = "flex";
+          roleNoticeCrew.style.display = "none";
+          passwordGroup.classList.add('show');
+          loginBtnText.innerText = "Verifikasi & Masuk (Admin)";
+        } else {
+          // CREW
+          roleNoticeAdmin.style.display = "none";
+          roleNoticeCrew.style.display = "flex";
+          passwordGroup.classList.remove('show');
+          loginBtnText.innerText = `Masuk sebagai ${emp.name.split(" ")[0]} (Crew)`;
+        }
+      } else {
+        roleNoticeAdmin.style.display = "none";
+        roleNoticeCrew.style.display = "none";
+        passwordGroup.classList.remove('show');
+        loginBtnText.innerText = "Masuk Sekarang";
+      }
+      lucide.createIcons();
+    }
+
+    function quickFillNik(nik) {
+      const nikInput = document.getElementById('loginNikInput');
+      const pwdInput = document.getElementById('loginPasswordInput');
+      nikInput.value = nik;
+      pwdInput.value = ""; // Pastikan password SELALU KOSONG, tidak pernah autofill
+      handleNikInput(nik);
+      
+      const emp = appData.employees.find(e => e.nik === nik);
+      if (emp && (emp.role === "ADMIN" || emp.group === "MANAGEMENT")) {
+        pwdInput.focus();
+      }
+    }
+
+    function handleLoginSubmit(e) {
+      e.preventDefault();
+      const nikInput = document.getElementById('loginNikInput').value.trim();
+      const pwdInput = document.getElementById('loginPasswordInput').value.trim();
+
+      if (!nikInput) {
+        showToast("Silakan masukkan NIK Anda!", "warning");
+        return;
+      }
+
+      const emp = appData.employees.find(e => e.nik === nikInput);
+      if (!emp) {
+        showToast("NIK tidak ditemukan dalam database!", "error");
+        return;
+      }
+
+      // Check role
+      if (emp.role === "ADMIN" || emp.group === "MANAGEMENT") {
+        if (!pwdInput) {
+          showToast("Akun Management memerlukan password!", "warning");
+          document.getElementById('loginPasswordInput').focus();
+          return;
+        }
+        if (pwdInput !== (emp.password || "1234")) {
+          showToast("Password salah! (Gunakan: 1234)", "error");
+          return;
+        }
+        // Admin Login Success
+        performLoginSuccess(emp, "Selamat datang Admin " + emp.name.split(" ")[0]);
+      } else {
+        // Crew Direct Login
+        performLoginSuccess(emp, "Login Berhasil! Halo Crew " + emp.name.split(" ")[0]);
+      }
+    }
+
+    function performLoginSuccess(emp, msg) {
+      currentUser = emp;
+      sessionStorage.setItem(SESSION_USER_KEY, emp.nik);
+      
+      // Hide login, show app
+      document.getElementById('loginScreen').classList.add('hidden');
+      document.getElementById('appScreen').classList.add('active');
+
+      showToast(msg, "success");
+      initAppWithUser();
+    }
+
+    function handleLogout() {
+      sessionStorage.removeItem(SESSION_USER_KEY);
+      currentUser = null;
+      document.getElementById('loginNikInput').value = "";
+      document.getElementById('loginPasswordInput').value = "";
+      handleNikInput("");
+      renderLoginQuickChips(); // Render ulang chips saat kembali ke login
+      
+      document.getElementById('appScreen').classList.remove('active');
+      document.getElementById('loginScreen').classList.remove('hidden');
+      showToast("Anda telah keluar.", "warning");
+      switchTab('home');
+    }
+
+    /* Render Chips NIK Dinamis di Layar Login */
+    function renderLoginQuickChips() {
+      const container = document.getElementById('loginQuickChipsContainer');
+      if (!container || !appData || !appData.employees) return;
+
+      let html = '';
+      appData.employees.forEach(emp => {
+        const isAdmin = emp.role === "ADMIN" || emp.group === "MANAGEMENT";
+        const firstName = (emp.name || 'STAFF').split(" ")[0].toUpperCase();
+        const roleLabel = isAdmin ? "Admin" : "Crew";
+        const colorStyle = isAdmin ? "color: var(--color-primary-orange);" : "color: var(--color-primary-green);";
+
+        html += `
+          <div class="chip-item" onclick="quickFillNik('${emp.nik}')">
+            <div class="chip-item-name">${firstName} (${emp.position || 'CREW'})</div>
+            <div class="chip-item-nik">
+              <span>${emp.nik}</span>
+              <span style="${colorStyle} font-weight: 700;">${roleLabel}</span>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    /* =======================================================
+       APP DASHBOARD INITIALIZER
+       ======================================================= */
+    function initAppWithUser() {
+      if (!currentUser) return;
+
+      const isAdmin = currentUser.role === "ADMIN" || currentUser.group === "MANAGEMENT";
+
+      // Header role badge
+      const headerRoleBadge = document.getElementById('headerRoleBadge');
+      if (isAdmin) {
+        headerRoleBadge.innerText = "MANAGEMENT / ADMIN";
+        headerRoleBadge.className = "role-pill-badge admin";
+      } else {
+        headerRoleBadge.innerText = "CREW OUTLET";
+        headerRoleBadge.className = "role-pill-badge crew";
+      }
+
+      // Home Greeting
+      document.getElementById('homeGreetingName').innerText = `Halo, ${capitalizeWords(currentUser.name)}`;
+
+      // Admin Overview Panel & Action Buttons Toggle
+      const adminOverviewBox = document.getElementById('adminOverviewBox');
+      const adminActionButtonsRow = document.getElementById('adminActionButtonsRow');
+      if (isAdmin) {
+        adminOverviewBox.style.display = "block";
+        adminActionButtonsRow.style.display = "block";
+        renderAdminCrewList();
+      } else {
+        adminOverviewBox.style.display = "none";
+        adminActionButtonsRow.style.display = "none";
+      }
+
+      // Profil Tab Binding
+      document.getElementById('profileAvatarInitial').innerText = currentUser.name.charAt(0);
+      document.getElementById('profileDisplayName').innerText = currentUser.name;
+      document.getElementById('profileDisplayNIM').innerText = currentUser.nik;
+      document.getElementById('profilePosition').innerText = `${currentUser.position} (${isAdmin ? 'Supervisor / Admin' : 'Outlet Staff'})`;
+      document.getElementById('profileGroup').innerText = currentUser.group;
+      document.getElementById('profileRoleBadgeText').innerText = isAdmin ? "ADMIN (Akses Penuh)" : "CREW (Absensi Pribadi)";
+
+      // Reset today attendance tracker for this user session
+      todayAttendanceState = { clockIn: null, clockOut: null, status: "BELUM" };
+
+      updateTodayScheduleView();
+      renderHistoryTimeline();
+      updateRiwayatSummaryStats();
+      lucide.createIcons();
+    }
+
+    function renderAdminCrewList() {
+      const listEl = document.getElementById('adminCrewScheduleList');
+      const days = ['Ahad', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+      const currentDay = days[new Date().getDay()] || 'Senin';
+
+      let html = '';
+      appData.employees.forEach(emp => {
+        const shift = emp.scheduleM1[currentDay] || '09:00:00';
+        const isOff = shift === 'X';
+        const shiftText = isOff ? 'LIBUR (OFF)' : (shift.startsWith('09') ? 'Shift 1 (09:00)' : 'Shift 2 (15:00)');
+        const colorStyle = isOff ? 'color: #94a3b8;' : (shift.startsWith('09') ? 'color: #4ade80;' : 'color: #fb923c;');
+
+        html += `
+          <div class="admin-crew-item">
+            <span><strong>${emp.name.split(" ")[0]}</strong> (${emp.position})</span>
+            <span style="${colorStyle} font-weight: 700;">${shiftText}</span>
+          </div>
+        `;
+      });
+      listEl.innerHTML = html;
+    }
+
+    function capitalizeWords(str) {
+      return str.toLowerCase().replace(/(?:^|\s)\S/g, function(a) { return a.toUpperCase(); });
+    }
+
+    /* =======================================================
+       TAB SWITCHING
+       ======================================================= */
+    function switchTab(tabId) {
+      document.querySelectorAll('.page-content').forEach(page => page.classList.remove('active'));
+      document.querySelectorAll('.nav-tab-btn').forEach(btn => btn.classList.remove('active'));
+
+      const targetPage = document.getElementById(`tab-${tabId}`);
+      if (targetPage) targetPage.classList.add('active');
+
+      const targetBtn = document.getElementById(`nav-btn-${tabId}`);
+      if (targetBtn) targetBtn.classList.add('active');
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      lucide.createIcons();
+    }
+
+    /* =======================================================
+       LIVE CLOCK
+       ======================================================= */
+    function setupLiveClock() {
+      const days = ['Ahad', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+      const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+
+      function updateClock() {
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+
+        const clockEl = document.getElementById('liveDigitalClock');
+        if (clockEl) {
+          clockEl.innerText = `${hours}:${minutes}:${seconds} WIB`;
+        }
+
+        const greetingEl = document.getElementById('greetingTimeText');
+        if (greetingEl) {
+          const h = now.getHours();
+          if (h >= 4 && h < 11) greetingEl.innerText = "Selamat Pagi";
+          else if (h >= 11 && h < 15) greetingEl.innerText = "Selamat Siang";
+          else if (h >= 15 && h < 18) greetingEl.innerText = "Selamat Sore";
+          else greetingEl.innerText = "Selamat Malam";
+        }
+      }
+
+      setInterval(updateClock, 1000);
+      updateClock();
+
+      const now = new Date();
+      const dayName = days[now.getDay()];
+      const dateNum = now.getDate();
+      const monthName = months[now.getMonth()];
+      const year = now.getFullYear();
+      document.getElementById('homeCurrentDate').innerText = `${dayName}, ${dateNum} ${monthName} ${year}`;
+    }
+
+    /* =======================================================
+       SCHEDULE & ATTENDANCE ACTIONS
+       ======================================================= */
+    function updateTodayScheduleView() {
+      if (!currentUser) return;
+
+      const daysIndo = ['Ahad', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+      const currentDayName = daysIndo[new Date().getDay()] || 'Senin';
+      const scheduleCycle = isWeek2 ? currentUser.scheduleM2 : currentUser.scheduleM1;
+      const todayShiftTime = scheduleCycle[currentDayName] || scheduleCycle['Senin'];
+
+      const isOff = todayShiftTime === 'X';
+
+      const scheduleIcon = document.getElementById('todayScheduleIcon');
+      const scheduleTitle = document.getElementById('todayScheduleTitle');
+      const scheduleHours = document.getElementById('todayHoursText');
+      const scheduleDesc = document.getElementById('todayScheduleDesc');
+      const actionBtn = document.getElementById('homeActionButton');
+      const actionText = document.getElementById('homeActionText');
+      const statusPill = document.getElementById('homeStatusPill');
+      const statusPillText = document.getElementById('homeStatusPillText');
+      const clockInSub = document.getElementById('homeClockInSub');
+      const clockOutSub = document.getElementById('homeClockOutSub');
+      const statusSummary = document.getElementById('scheduleStatusSummary');
+
+      if (isOff) {
+        scheduleIcon.className = "schedule-badge-icon off-icon";
+        scheduleTitle.innerText = "Hari Libur Rutin (OFF)";
+        scheduleHours.innerText = "Tidak ada jadwal kerja hari ini";
+        scheduleDesc.innerText = "Selamat beristirahat!";
+        statusSummary.innerText = "Status: Libur Rutin";
+
+        actionBtn.className = "btn-absen btn-disabled";
+        actionBtn.disabled = true;
+        actionText.innerText = "Hari Ini Libur (OFF)";
+        statusPill.className = "status-pill libur";
+        statusPillText.innerText = "Libur Rutin";
+      } else {
+        const isMorning = todayShiftTime.startsWith("09");
+        const shiftLabel = isMorning ? "Shift 1 (Pagi)" : "Shift 2 (Sore)";
+        const endHour = isMorning ? "17:00:00" : "23:00:00";
+
+        scheduleIcon.className = "schedule-badge-icon";
+        scheduleTitle.innerText = `${shiftLabel} • ${currentUser.position}`;
+        scheduleHours.innerText = `${todayShiftTime} - ${endHour} WIB`;
+        scheduleDesc.innerText = `Outlet Kang Jus • Sesuai Jadwal ${isWeek2 ? 'M2' : 'M1'}`;
+        statusSummary.innerText = `Jadwal: ${shiftLabel}`;
+        clockInSub.innerText = `Jadwal: ${todayShiftTime.substring(0,5)}`;
+        clockOutSub.innerText = `Jadwal: ${endHour.substring(0,5)}`;
+
+        refreshAttendanceUI();
+      }
+
+      renderWeekScheduleChips(scheduleCycle, currentDayName);
+    }
+
+    function renderWeekScheduleChips(scheduleCycle, activeDayName) {
+      const weekChipsEl = document.getElementById('weekScheduleChips');
+      const days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Ahad'];
+      
+      let html = '';
+      days.forEach(day => {
+        const shift = scheduleCycle[day];
+        const isOff = shift === 'X';
+        const isActive = day === activeDayName;
+        const displayShift = isOff ? 'OFF' : shift.substring(0, 5);
+
+        html += `
+          <div class="day-chip ${isActive ? 'active-day' : ''} ${isOff ? 'is-off' : ''}">
+            <span class="day-chip-name">${day.substring(0, 3)}</span>
+            <span class="day-chip-shift">${displayShift}</span>
+          </div>
+        `;
+      });
+
+      weekChipsEl.innerHTML = html;
+    }
+
+    function refreshAttendanceUI() {
+      const actionBtn = document.getElementById('homeActionButton');
+      const actionIcon = document.getElementById('homeActionIcon');
+      const actionText = document.getElementById('homeActionText');
+      const statusPill = document.getElementById('homeStatusPill');
+      const statusPillText = document.getElementById('homeStatusPillText');
+      const clockInVal = document.getElementById('homeClockInDisplay');
+      const clockOutVal = document.getElementById('homeClockOutDisplay');
+
+      if (todayAttendanceState.status === "BELUM") {
+        actionBtn.className = "btn-absen btn-masuk";
+        actionBtn.disabled = false;
+        actionText.innerText = "Absen Masuk Sekarang";
+        actionIcon.setAttribute('data-lucide', 'log-in');
+        statusPill.className = "status-pill belum";
+        statusPillText.innerText = "Belum Absen";
+        clockInVal.innerText = "--:--";
+        clockOutVal.innerText = "--:--";
+      } else if (todayAttendanceState.status === "MASUK") {
+        actionBtn.className = "btn-absen btn-pulang";
+        actionBtn.disabled = false;
+        actionText.innerText = "Absen Pulang Sekarang";
+        actionIcon.setAttribute('data-lucide', 'log-out');
+        statusPill.className = "status-pill masuk";
+        statusPillText.innerText = "Sedang Bekerja";
+        clockInVal.innerText = todayAttendanceState.clockIn.substring(0, 5);
+        clockOutVal.innerText = "--:--";
+      } else if (todayAttendanceState.status === "SELESAI") {
+        actionBtn.className = "btn-absen btn-disabled";
+        actionBtn.disabled = true;
+        actionText.innerText = "Presensi Hari Ini Selesai";
+        actionIcon.setAttribute('data-lucide', 'check-circle-2');
+        statusPill.className = "status-pill selesai";
+        statusPillText.innerText = "Hadir Selesai";
+        clockInVal.innerText = todayAttendanceState.clockIn.substring(0, 5);
+        clockOutVal.innerText = todayAttendanceState.clockOut.substring(0, 5);
+      }
+      lucide.createIcons();
+    }
+
+    /* =======================================================
+       KODE QR TOKO STATIS & LOGIKA SCANNER KAMERA
+       ======================================================= */
+    const OFFICIAL_STORE_QR_CODE = "KANGJUS-OUTLET-PRESENSI-OFFICIAL";
+    let html5QrScannerInstance = null;
+    let pendingAttendanceActionType = null; // 'MASUK' atau 'PULANG'
+
+    function handleAttendanceAction() {
+      if (todayAttendanceState.status === "BELUM") {
+        pendingAttendanceActionType = 'MASUK';
+        startQrScanner("Absen Masuk");
+      } else if (todayAttendanceState.status === "MASUK") {
+        pendingAttendanceActionType = 'PULANG';
+        startQrScanner("Absen Pulang");
+      }
+    }
+
+    function startQrScanner(actionTitle) {
+      document.getElementById('qrScannerModalTitle').innerText = `Scan QR Toko (${actionTitle})`;
+      document.getElementById('qrScannerStatusNotice').innerText = "Arahkan kamera ke QR Toko Kang Jus...";
+      document.getElementById('qrScannerStatusNotice').style.color = "var(--text-muted)";
+      document.getElementById('qrScannerModalBackdrop').classList.add('show');
+
+      try {
+        if (html5QrScannerInstance) {
+          html5QrScannerInstance.stop().catch(() => {}).then(() => {
+            initQrScannerCamera();
+          });
+        } else {
+          initQrScannerCamera();
+        }
+      } catch (e) {
+        fallbackQrSimulate(e);
+      }
+    }
+
+    function initQrScannerCamera() {
+      html5QrScannerInstance = new Html5Qrcode("qrReaderContainer");
+      const config = { fps: 10, qrbox: { width: 220, height: 220 } };
+
+      html5QrScannerInstance.start(
+        { facingMode: "environment" },
+        config,
+        (decodedText) => {
+          // Callback saat QR berhasil terbaca oleh kamera
+          onQrCodeDetected(decodedText);
+        },
+        (errorMessage) => {
+          // Frame scanner berjalan mencari QR
+        }
+      ).catch(err => {
+        console.warn("Akses kamera tidak tersedia atau browser memblokir:", err);
+        fallbackQrSimulate(err);
+      });
+    }
+
+    function fallbackQrSimulate(err) {
+      const container = document.getElementById('qrReaderContainer');
+      const notice = document.getElementById('qrScannerStatusNotice');
+      notice.innerHTML = `<span style="color: var(--color-primary-orange);">Kamera tidak aktif/izin browser belum diberikan.</span>`;
+      
+      container.innerHTML = `
+        <div style="padding: 24px 16px; background: #1e293b; color: #fff; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;">
+          <i data-lucide="camera-off" style="width: 32px; height: 32px; color: #f87171;"></i>
+          <p style="font-size: 11px; color: #cbd5e1; text-align: center;">Kamera tidak diizinkan atau mode desktop. Anda dapat menggunakan tombol simulasi scan di bawah ini:</p>
+          <button type="button" class="btn-login" style="padding: 10px 16px; font-size: 12px; margin: 0; background: var(--color-primary-green);" onclick="onQrCodeDetected('${OFFICIAL_STORE_QR_CODE}')">
+            Simulasikan Scan QR Toko Sukses
+          </button>
+        </div>
+      `;
+      lucide.createIcons();
+    }
+
+    function stopQrScanner() {
+      if (html5QrScannerInstance) {
+        try {
+          html5QrScannerInstance.stop().catch(() => {}).finally(() => {
+            html5QrScannerInstance = null;
+          });
+        } catch (e) {
+          html5QrScannerInstance = null;
+        }
+      }
+      document.getElementById('qrScannerModalBackdrop').classList.remove('show');
+    }
+
+    function onQrCodeDetected(scannedCode) {
+      if (scannedCode.trim() === OFFICIAL_STORE_QR_CODE) {
+        stopQrScanner();
+        showToast("QR Toko Cocok! Verifikasi Lokasi Berhasil.", "success");
+        executeVerifiedAttendance();
+      } else {
+        const notice = document.getElementById('qrScannerStatusNotice');
+        notice.innerHTML = `<span style="color: #ef4444; font-weight: 700;">QR Tidak Valid! Bukan QR Toko Kang Jus.</span>`;
+        showToast("QR Code tidak sesuai dengan toko Kang Jus!", "error");
+      }
+    }
+
+    function executeVerifiedAttendance() {
+      const now = new Date();
+      const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+
+      // Ambil jadwal shift hari ini untuk pengecekan keterlambatan
+      const daysIndo = ['Ahad', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+      const currentDayName = daysIndo[now.getDay()] || 'Senin';
+      const scheduleCycle = isWeek2 ? currentUser.scheduleM2 : currentUser.scheduleM1;
+      const scheduledShiftTime = scheduleCycle[currentDayName] || "09:00:00";
+
+      if (pendingAttendanceActionType === 'MASUK') {
+        todayAttendanceState.clockIn = timeStr;
+        todayAttendanceState.status = "MASUK";
+
+        let lateMinutes = 0;
+        if (scheduledShiftTime !== 'X') {
+          const [schH, schM] = scheduledShiftTime.split(":").map(Number);
+          const currentTotalMinutes = now.getHours() * 60 + now.getMinutes();
+          const scheduledTotalMinutes = schH * 60 + schM;
+          lateMinutes = currentTotalMinutes - scheduledTotalMinutes;
+        }
+
+        if (lateMinutes > 0) {
+          showToast(`Absen Masuk berhasil (Scan QR Toko)! Terlambat ${lateMinutes}m`, "warning");
+        } else {
+          showToast("Absen Masuk berhasil dicatat (Scan QR Toko Tepat Waktu)!", "success");
+        }
+      } else if (pendingAttendanceActionType === 'PULANG') {
+        todayAttendanceState.clockOut = timeStr;
+        todayAttendanceState.status = "SELESAI";
+
+        let isLate = false;
+        let lateMinutes = 0;
+        let notesText = "Hadir Tepat Waktu (Scan QR)";
+        let statusType = "HADIR";
+
+        if (scheduledShiftTime !== 'X') {
+          const [schH, schM] = scheduledShiftTime.split(":").map(Number);
+          const [inH, inM] = todayAttendanceState.clockIn.split(":").map(Number);
+          const inTotalMinutes = inH * 60 + inM;
+          const scheduledTotalMinutes = schH * 60 + schM;
+          lateMinutes = inTotalMinutes - scheduledTotalMinutes;
+
+          if (lateMinutes > 0) {
+            isLate = true;
+            statusType = "TERLAMBAT";
+            notesText = `Terlambat ${lateMinutes} Menit dari jadwal (${scheduledShiftTime.substring(0,5)}) [Scan QR]`;
+          } else {
+            notesText = `Tepat Waktu (Jadwal: ${scheduledShiftTime.substring(0,5)}) [Scan QR]`;
+          }
+        }
+
+        const [inH, inM] = todayAttendanceState.clockIn.split(":").map(Number);
+        const [outH, outM] = todayAttendanceState.clockOut.split(":").map(Number);
+        let diffMinutes = (outH * 60 + outM) - (inH * 60 + inM);
+        if (diffMinutes < 0) diffMinutes += 24 * 60;
+        const durHours = Math.floor(diffMinutes / 60);
+        const durMins = diffMinutes % 60;
+
+        showToast("Absen Pulang berhasil dicatat (Scan QR Toko)! Sampai jumpa.", "success");
+
+        const newRecord = {
+          nik: currentUser.nik,
+          date: now.toISOString().slice(0, 10),
+          dayName: currentDayName,
+          dateNum: now.getDate(),
+          monthName: "Nov",
+          inTime: todayAttendanceState.clockIn,
+          outTime: todayAttendanceState.clockOut,
+          duration: `${durHours} Jam ${durMins} Menit`,
+          notes: notesText,
+          lateMinutes: lateMinutes > 0 ? lateMinutes : 0,
+          statusType: statusType,
+          statusText: isLate ? `Terlambat (+${lateMinutes}m)` : "Hadir Tepat Waktu"
+        };
+
+        if (!appData.attendanceLogs) appData.attendanceLogs = [];
+        appData.attendanceLogs.unshift(newRecord);
+        saveAppData();
+
+        renderHistoryTimeline();
+        updateRiwayatSummaryStats();
+      }
+
+      refreshAttendanceUI();
+    }
+
+    /* =======================================================
+       RIWAYAT TIMELINE & STATS
+       ======================================================= */
+    function renderHistoryTimeline() {
+      if (!currentUser) return;
+      const listContainer = document.getElementById('historyTimelineList');
+      const statusFilter = document.getElementById('filterStatusSelect').value;
+
+      const logs = (appData.attendanceLogs || []).filter(item => item.nik === currentUser.nik);
+      const filteredLogs = logs.filter(item => {
+        if (statusFilter === 'ALL') return true;
+        return item.statusType === statusFilter;
+      });
+
+      if (filteredLogs.length === 0) {
+        listContainer.innerHTML = `
+          <div class="empty-state">
+            <i data-lucide="clipboard-x" style="width: 32px; height: 32px;"></i>
+            <h3>Tidak ada riwayat ditemukan</h3>
+            <p>Tidak ada catatan absensi dalam JSON untuk akun ini.</p>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      let html = '';
+      filteredLogs.forEach(item => {
+        const dotClass = (item.statusType || 'hadir').toLowerCase();
+
+        html += `
+          <div class="timeline-item">
+            <div class="timeline-dot ${dotClass}"></div>
+            <div class="history-card">
+              <div class="history-card-top">
+                <div class="date-badge-col">
+                  <span class="date-badge-day">${item.dayName ? item.dayName.substring(0, 3) : 'HRI'}</span>
+                  <span class="date-badge-num">${item.dateNum || '--'}</span>
+                  <span class="date-badge-month">${item.monthName || 'Bln'}</span>
+                </div>
+                <div class="punch-times-col">
+                  <div class="punch-block">
+                    <span class="punch-label">
+                      <i data-lucide="log-in" style="width: 12px; height: 12px; color: var(--color-primary-green);"></i>
+                      Masuk
+                    </span>
+                    <span class="punch-time">${item.inTime}</span>
+                  </div>
+                  <div class="punch-block">
+                    <span class="punch-label">
+                      <i data-lucide="log-out" style="width: 12px; height: 12px; color: var(--color-primary-orange);"></i>
+                      Pulang
+                    </span>
+                    <span class="punch-time">${item.outTime}</span>
+                  </div>
+                </div>
+                <span class="status-tag ${dotClass}">
+                  ${item.statusText}
+                </span>
+              </div>
+              <div class="history-card-divider"></div>
+              <div class="history-card-bottom">
+                <div class="duration-text">
+                  <i data-lucide="timer" style="width: 13px; height: 13px; color: var(--text-muted);"></i>
+                  <span>${item.duration}</span>
+                </div>
+                <div class="notes-text" title="${item.notes}">
+                  ${item.notes}
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+
+      listContainer.innerHTML = html;
+      lucide.createIcons();
+    }
+
+    function updateRiwayatSummaryStats() {
+      if (!currentUser) return;
+      let hadir = 0;
+      let terlambat = 0;
+      let dinas = 0;
+      let alpha = 0;
+
+      const logs = (appData.attendanceLogs || []).filter(item => item.nik === currentUser.nik);
+
+      logs.forEach(item => {
+        if (item.statusType === 'HADIR') hadir++;
+        else if (item.statusType === 'TERLAMBAT') terlambat++;
+        else if (item.statusType === 'DINAS') dinas++;
+        else if (item.statusType === 'ALPHA') alpha++;
+      });
+
+      document.getElementById('statCountHadir').innerText = hadir;
+      document.getElementById('statCountTerlambat').innerText = terlambat;
+      document.getElementById('statCountDinas').innerText = dinas;
+      document.getElementById('statCountAlpha').innerText = alpha;
+    }
+
+    /* =======================================================
+       FITUR ADMIN 1: MANAJEMEN KARYAWAN & JADWAL (TABEL EXCEL)
+       DILENGKAPI: TAMBAH BARIS, HAPUS KARYAWAN, & FITUR UNDO
+       ======================================================= */
+    let activeTableWeek = 'M1';
+    let scheduleHistoryStack = []; // Menyimpan riwayat perubahan untuk fitur Undo
+
+    function pushHistorySnapshot() {
+      // Simpan deep copy snapshot dari appData.employees sebelum diedit
+      const snapshot = JSON.parse(JSON.stringify(appData.employees));
+      scheduleHistoryStack.push(snapshot);
+      if (scheduleHistoryStack.length > 20) {
+        scheduleHistoryStack.shift(); // Maksimal 20 langkah undo
+      }
+      updateUndoButtonUI();
+    }
+
+    function undoTableAction() {
+      if (scheduleHistoryStack.length === 0) {
+        showToast("Tidak ada perubahan yang dapat di-undo!", "warning");
+        return;
+      }
+      const previousState = scheduleHistoryStack.pop();
+      appData.employees = JSON.parse(JSON.stringify(previousState));
+      renderScheduleTable();
+      updateUndoButtonUI();
+      showToast("Berhasil mengembalikan (Undo) perubahan terakhir!", "success");
+      lucide.createIcons();
+    }
+
+    function updateUndoButtonUI() {
+      const countEl = document.getElementById('undoCountDisplay');
+      const btnUndo = document.getElementById('btnUndoTableAction');
+      if (countEl) countEl.innerText = scheduleHistoryStack.length;
+      if (btnUndo) {
+        if (scheduleHistoryStack.length > 0) {
+          btnUndo.style.opacity = "1";
+          btnUndo.style.cursor = "pointer";
+        } else {
+          btnUndo.style.opacity = "0.5";
+        }
+      }
+    }
+
+    function openScheduleEditorModal() {
+      activeTableWeek = 'M1';
+      scheduleHistoryStack = []; // Reset riwayat saat modal dibuka
+      updateUndoButtonUI();
+      updateTableWeekButtons();
+      renderScheduleTable();
+      document.getElementById('scheduleEditorModalBackdrop').classList.add('show');
+      lucide.createIcons();
+    }
+
+    function closeScheduleEditorModal(e) {
+      document.getElementById('scheduleEditorModalBackdrop').classList.remove('show');
+    }
+
+    function switchTableWeek(week) {
+      activeTableWeek = week;
+      updateTableWeekButtons();
+      renderScheduleTable();
+    }
+
+    function updateTableWeekButtons() {
+      const btnM1 = document.getElementById('btnTabTableM1');
+      const btnM2 = document.getElementById('btnTabTableM2');
+      if (activeTableWeek === 'M1') {
+        btnM1.style.background = "var(--color-primary-green)";
+        btnM1.style.color = "#ffffff";
+        btnM1.style.borderColor = "var(--color-primary-green)";
+        btnM2.style.background = "#ffffff";
+        btnM2.style.color = "var(--text-main)";
+        btnM2.style.borderColor = "var(--border-color)";
+      } else {
+        btnM2.style.background = "var(--color-primary-green)";
+        btnM2.style.color = "#ffffff";
+        btnM2.style.borderColor = "var(--color-primary-green)";
+        btnM1.style.background = "#ffffff";
+        btnM1.style.color = "var(--text-main)";
+        btnM1.style.borderColor = "var(--border-color)";
+      }
+    }
+
+    function addNewEmployeeRow() {
+      pushHistorySnapshot();
+      const newNik = "2" + Math.floor(10000000 + Math.random() * 90000000); // Generate NIK unik
+      const newEmployee = {
+        nik: newNik,
+        name: "KARYAWAN BARU",
+        position: "CREW",
+        group: "CREW",
+        role: "CREW",
+        scheduleM1: {
+          Senin: "09:00:00",
+          Selasa: "09:00:00",
+          Rabu: "15:00:00",
+          Kamis: "15:00:00",
+          Jumat: "09:00:00",
+          Sabtu: "15:00:00",
+          Ahad: "X",
+          offCount: 1
+        },
+        scheduleM2: {
+          Senin: "15:00:00",
+          Selasa: "15:00:00",
+          Rabu: "09:00:00",
+          Kamis: "09:00:00",
+          Jumat: "15:00:00",
+          Sabtu: "09:00:00",
+          Ahad: "X",
+          offCount: 1
+        }
+      };
+      appData.employees.push(newEmployee);
+      renderScheduleTable();
+      showToast("1 baris karyawan baru berhasil ditambahkan!", "success");
+      lucide.createIcons();
+    }
+
+    function deleteEmployeeRow(empIdx) {
+      const emp = appData.employees[empIdx];
+      if (!emp) return;
+
+      if (emp.role === "ADMIN" || emp.group === "MANAGEMENT") {
+        if (!confirm(`Perhatian: ${emp.name} adalah akun Management (Admin). Tetap ingin menghapus?`)) {
+          return;
+        }
+      } else {
+        if (!confirm(`Hapus karyawan "${emp.name}" (NIK: ${emp.nik}) dari daftar jadwal?`)) {
+          return;
+        }
+      }
+
+      pushHistorySnapshot();
+      appData.employees.splice(empIdx, 1);
+      renderScheduleTable();
+      showToast(`Karyawan ${emp.name} berhasil dihapus (Bisa di-Undo)!`, "warning");
+      lucide.createIcons();
+    }
+
+    function renderScheduleTable() {
+      const tbody = document.getElementById('excelScheduleTableBody');
+      const days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Ahad'];
+      const cycleKey = activeTableWeek === 'M1' ? 'scheduleM1' : 'scheduleM2';
+
+      let html = '';
+      appData.employees.forEach((emp, empIdx) => {
+        const sched = emp[cycleKey] || {};
+        html += `
+          <tr style="border-bottom: 1px solid var(--border-color);">
+            <td style="padding: 6px 8px; border-right: 1px solid var(--border-color);">
+              <input type="text" value="${emp.group}" onfocus="pushHistorySnapshot()" onchange="updateEmployeeCell(${empIdx}, 'group', this.value)" style="width: 85px; border: 1px solid #cbd5e1; border-radius: 4px; padding: 4px 6px; font-size: 11px; font-weight: 700;">
+            </td>
+            <td style="padding: 6px 8px; border-right: 1px solid var(--border-color);">
+              <input type="text" value="${emp.nik}" onfocus="pushHistorySnapshot()" onchange="updateEmployeeCell(${empIdx}, 'nik', this.value)" style="width: 85px; border: 1px solid #cbd5e1; border-radius: 4px; padding: 4px 6px; font-size: 11px;">
+            </td>
+            <td style="padding: 6px 8px; border-right: 1px solid var(--border-color);">
+              <input type="text" value="${emp.name}" onfocus="pushHistorySnapshot()" onchange="updateEmployeeCell(${empIdx}, 'name', this.value)" style="width: 140px; border: 1px solid #cbd5e1; border-radius: 4px; padding: 4px 6px; font-size: 11px; font-weight: 700;">
+            </td>
+            <td style="padding: 6px 8px; border-right: 1px solid var(--border-color);">
+              <input type="text" value="${emp.position}" onfocus="pushHistorySnapshot()" onchange="updateEmployeeCell(${empIdx}, 'position', this.value)" style="width: 60px; border: 1px solid #cbd5e1; border-radius: 4px; padding: 4px 6px; font-size: 11px;">
+            </td>
+        `;
+
+        days.forEach(day => {
+          const val = sched[day] || 'X';
+          const isOff = val === 'X';
+          const bgInput = isOff ? '#fee2e2' : '#f0fdf4';
+          const colorInput = isOff ? '#b91c1c' : '#15803d';
+
+          html += `
+            <td style="padding: 6px 4px; border-right: 1px solid var(--border-color); text-align: center;">
+              <input type="text" value="${val}" onfocus="pushHistorySnapshot()" onchange="updateScheduleCell(${empIdx}, '${cycleKey}', '${day}', this.value)" style="width: 65px; text-align: center; border: 1px solid #cbd5e1; border-radius: 4px; padding: 4px; font-size: 11px; font-weight: 700; background: ${bgInput}; color: ${colorInput};">
+            </td>
+          `;
+        });
+
+        // Tombol Hapus Baris
+        html += `
+          <td style="padding: 6px 8px; text-align: center;">
+            <button type="button" onclick="deleteEmployeeRow(${empIdx})" title="Hapus Karyawan" style="background: #fee2e2; border: 1px solid #fca5a5; color: #ef4444; border-radius: 6px; padding: 4px 8px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center;">
+              <i data-lucide="trash-2" style="width: 13px; height: 13px;"></i>
+            </button>
+          </td>
+        </tr>`;
+      });
+
+      tbody.innerHTML = html;
+      lucide.createIcons();
+    }
+
+    function updateEmployeeCell(empIdx, field, val) {
+      if (appData.employees[empIdx]) {
+        appData.employees[empIdx][field] = val;
+      }
+    }
+
+    function updateScheduleCell(empIdx, cycleKey, day, val) {
+      if (appData.employees[empIdx] && appData.employees[empIdx][cycleKey]) {
+        appData.employees[empIdx][cycleKey][day] = val;
+      }
+    }
+
+    function saveScheduleTableChanges() {
+      saveAppData();
+      renderLoginQuickChips(); // Sinkronkan langsung ke daftar pilih cepat di login
+      showToast("Jadwal & Data Karyawan berhasil diperbarui!", "success");
+      closeScheduleEditorModal();
+      initAppWithUser();
+    }
+
+    /* =======================================================
+       FITUR ADMIN 2: CETAK REKAPITULASI ABSENSI BULANAN
+       ======================================================= */
+    function openPrintReportModal() {
+      // Set default date range to current month
+      const now = new Date();
+      const firstDay = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10);
+      const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().slice(0, 10);
+
+      document.getElementById('printStartDate').value = firstDay;
+      document.getElementById('printEndDate').value = lastDay;
+
+      // Populate employee filter options
+      const empSelect = document.getElementById('printEmployeeFilter');
+      let optHtml = '<option value="ALL">Semua Karyawan (Seluruh Outlet)</option>';
+      appData.employees.forEach(e => {
+        optHtml += `<option value="${e.nik}">${e.name} (${e.position})</option>`;
+      });
+      empSelect.innerHTML = optHtml;
+
+      calculateReportData();
+      document.getElementById('printReportModalBackdrop').classList.add('show');
+      lucide.createIcons();
+    }
+
+    function closePrintReportModal(e) {
+      document.getElementById('printReportModalBackdrop').classList.remove('show');
+    }
+
+    function calculateReportData() {
+      const startDate = document.getElementById('printStartDate').value;
+      const endDate = document.getElementById('printEndDate').value;
+      const selectedNik = document.getElementById('printEmployeeFilter').value;
+      const tbody = document.getElementById('reportTableBody');
+
+      document.getElementById('reportPeriodText').innerText = `Periode: ${startDate || 'Awal'} s/d ${endDate || 'Akhir'}`;
+
+      const logs = appData.attendanceLogs || [];
+      const employeesToReport = selectedNik === 'ALL' 
+        ? appData.employees 
+        : appData.employees.filter(e => e.nik === selectedNik);
+
+      let html = '';
+      employeesToReport.forEach(emp => {
+        // Filter log per employee within date range
+        const empLogs = logs.filter(log => {
+          if (log.nik !== emp.nik) return false;
+          if (startDate && log.date && log.date < startDate) return false;
+          if (endDate && log.date && log.date > endDate) return false;
+          return true;
+        });
+
+        let hadirCount = 0;
+        let terlambatCount = 0;
+        let dinasCount = 0;
+        let alphaCount = 0;
+
+        empLogs.forEach(l => {
+          if (l.statusType === 'HADIR') hadirCount++;
+          else if (l.statusType === 'TERLAMBAT') terlambatCount++;
+          else if (l.statusType === 'DINAS') dinasCount++;
+          else if (l.statusType === 'ALPHA') alphaCount++;
+        });
+
+        html += `
+          <tr style="border-bottom: 1px solid #e5e7eb;">
+            <td style="padding: 6px 8px; border: 1px solid #d1d5db; font-weight: 700; color: #111827;">${emp.name}</td>
+            <td style="padding: 6px 8px; border: 1px solid #d1d5db; color: #4b5563;">${emp.nik}</td>
+            <td style="padding: 6px 8px; border: 1px solid #d1d5db; font-weight: 600;">${emp.position}</td>
+            <td style="padding: 6px 8px; border: 1px solid #d1d5db; text-align: center; font-weight: 800; color: #16a34a;">${hadirCount}</td>
+            <td style="padding: 6px 8px; border: 1px solid #d1d5db; text-align: center; font-weight: 800; color: #ea580c;">${terlambatCount}</td>
+            <td style="padding: 6px 8px; border: 1px solid #d1d5db; text-align: center; font-weight: 800; color: #0284c7;">${dinasCount}</td>
+            <td style="padding: 6px 8px; border: 1px solid #d1d5db; text-align: center; font-weight: 800; color: #dc2626;">${alphaCount}</td>
+          </tr>
+        `;
+      });
+
+      tbody.innerHTML = html;
+    }
+
+    function executePrintReport() {
+      const printContents = document.getElementById('printableReportArea').innerHTML;
+      const originalContents = document.body.innerHTML;
+
+      const printWindow = window.open('', '', 'height=650,width=900');
+      printWindow.document.write('<html><head><title>Rekap Presensi Kang Jus</title>');
+      printWindow.document.write('<style>');
+      printWindow.document.write('body { font-family: sans-serif; padding: 20px; color: #111; }');
+      printWindow.document.write('table { width: 100%; border-collapse: collapse; margin-top: 15px; }');
+      printWindow.document.write('th, td { border: 1px solid #bbb; padding: 8px 10px; font-size: 12px; }');
+      printWindow.document.write('th { background: #f3f4f6; text-align: left; }');
+      printWindow.document.write('</style></head><body>');
+      printWindow.document.write(printContents);
+      printWindow.document.write('</body></html>');
+      printWindow.document.close();
+      printWindow.focus();
+      setTimeout(() => {
+        printWindow.print();
+        printWindow.close();
+      }, 350);
+    }
+
+    function exportDataToJSON() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `kang_jus_absensi_${new Date().toISOString().slice(0,10)}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+      showToast("File data JSON berhasil diunduh!", "success");
+    }
+
+    function showToast(msg, type = "success") {
+      const toast = document.getElementById('toastNotification');
+      const toastMsg = document.getElementById('toastMsg');
+      toastMsg.innerText = msg;
+
+      toast.className = `toast-popup show ${type}`;
+      setTimeout(() => {
+        toast.className = 'toast-popup';
+      }, 3000);
+    }
+
+    /* =======================================================
+       APP BOOTSTRAP
+       ======================================================= */
+    window.addEventListener('DOMContentLoaded', () => {
+      loadAppData();
+      setupLiveClock();
+
+      // Check session
+      const savedNik = sessionStorage.getItem(SESSION_USER_KEY);
+      if (savedNik) {
+        const emp = appData.employees.find(e => e.nik === savedNik);
+        if (emp) {
+          currentUser = emp;
+          document.getElementById('loginScreen').classList.add('hidden');
+          document.getElementById('appScreen').classList.add('active');
+          initAppWithUser();
+          return;
+        }
+      }
+
+      // Default: show login screen
+      renderLoginQuickChips();
+      document.getElementById('loginScreen').classList.remove('hidden');
+      document.getElementById('appScreen').classList.remove('active');
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>
