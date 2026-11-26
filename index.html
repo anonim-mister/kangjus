@@ -1920,14 +1920,17 @@
         if (stored) {
           appData = JSON.parse(stored);
         } else {
+          // Browser baru / incognito: pakai data awal LOKAL sementara
+          // JANGAN saveAppData() di sini — itu akan POST data kosong ke Vercel Blob
+          // dan me-RESET semua data karyawan & riwayat absensi yang ada di cloud!
+          // syncAppDataFromCloud() di bawah akan mengambil data real dari Blob.
           appData = JSON.parse(JSON.stringify(INITIAL_JSON_DATA));
-          saveAppData();
         }
       } catch (e) {
         appData = JSON.parse(JSON.stringify(INITIAL_JSON_DATA));
       }
 
-      // Ambil data terbaru dari Cloud Vercel Storage secara background (Sync Realtime)
+      // Ambil data terbaru dari Cloud Vercel Storage (akan menimpa data lokal awal di atas)
       syncAppDataFromCloud();
     }
 
