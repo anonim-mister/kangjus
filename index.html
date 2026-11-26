@@ -1902,6 +1902,11 @@
     let currentUser = null;
     let isWeek2 = false;
 
+    // Anti race-condition: mencegah syncAppDataFromCloud() menimpa data yang baru disimpan
+    let isSaving = false;
+    let lastSaveTimestamp = 0;
+    const SYNC_COOLDOWN_MS = 6000; // 6 detik cooldown setelah saveAppData selesai
+
     // Today attendance state
     let todayAttendanceState = {
       clockIn: null,
@@ -1927,6 +1932,12 @@
     }
 
     async function syncAppDataFromCloud(onSuccessCallback) {
+      // Jangan timpa data jika sedang save atau baru saja save (cooldown aktif)
+      if (isSaving || (Date.now() - lastSaveTimestamp < SYNC_COOLDOWN_MS)) {
+        console.log('⏸ syncAppDataFromCloud dilewati (sedang/baru save, cooldown aktif)');
+        if (onSuccessCallback) onSuccessCallback(appData);
+        return;
+      }
       try {
         const response = await fetch('/api/data', { cache: 'no-store' });
         if (response.ok) {
@@ -1960,6 +1971,10 @@
     }
 
     async function saveAppData(callback) {
+      // Set flag: sedang menyimpan — blokir sync dari cloud selama proses ini
+      isSaving = true;
+      lastSaveTimestamp = Date.now();
+
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(appData, null, 2));
       } catch (e) {
@@ -1976,6 +1991,10 @@
         if (callback) callback();
       } catch (err) {
         console.warn("Gagal sinkron data ke Cloud Vercel:", err);
+      } finally {
+        // Selesai save — catat waktu, baru lepas flag setelah cooldown
+        lastSaveTimestamp = Date.now();
+        isSaving = false;
       }
     }
 
