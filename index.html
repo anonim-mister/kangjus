@@ -1506,8 +1506,6 @@
           <div class="filter-select-box">
             <i data-lucide="calendar" style="width: 14px; height: 14px;"></i>
             <select id="filterMonthSelect" onchange="renderHistoryTimeline()">
-              <option value="current">November 2026</option>
-              <option value="prev">Oktober 2026</option>
               <option value="all">Semua Periode</option>
             </select>
           </div>
@@ -2199,6 +2197,38 @@
       }
     }
 
+    // === FILTER BULAN DINAMIS ===
+    function renderFilterMonthOptions() {
+      const sel = document.getElementById('filterMonthSelect');
+      if (!sel) return;
+
+      const monthNames = ['Januari','Februari','Maret','April','Mei','Juni',
+                          'Juli','Agustus','September','Oktober','November','Desember'];
+      const now = new Date();
+      const curMonth = now.getMonth();     // 0-11
+      const curYear  = now.getFullYear();
+
+      // Bulan sebelumnya
+      const prevMonth = curMonth === 0 ? 11 : curMonth - 1;
+      const prevYear  = curMonth === 0 ? curYear - 1 : curYear;
+
+      const curLabel  = monthNames[curMonth]  + ' ' + curYear;
+      const prevLabel = monthNames[prevMonth] + ' ' + prevYear;
+
+      // Simpan pilihan aktif sebelum re-render (agar tidak reset saat dipanggil ulang)
+      const currentVal = sel.value || 'current';
+
+      sel.innerHTML = `
+        <option value="current">${curLabel}</option>
+        <option value="prev">${prevLabel}</option>
+        <option value="all">Semua Periode</option>
+      `;
+
+      // Pulihkan pilihan aktif
+      sel.value = currentVal;
+      if (!sel.value) sel.value = 'current'; // fallback
+    }
+
     function initAppWithUser() {
       if (!currentUser) return;
 
@@ -2240,6 +2270,7 @@
       // Muat status presensi hari ini agar persist saat logout/refresh
       loadTodayAttendanceFromStorage();
 
+      renderFilterMonthOptions();
       updateTodayScheduleView();
       renderHistoryTimeline();
       updateRiwayatSummaryStats();
